@@ -99,6 +99,29 @@ tools/screenshot.ps1       drives the installed app and captures pages
 installer/UltimateWinUI.iss
 ```
 
+## ARM64
+
+The app ships native **win-arm64** builds and a dedicated ARM64 installer,
+same as the x64 ones. Nothing is disabled on ARM64. Where an x86/x64 step
+in a script literally cannot work there, the app runs a replacement body
+instead (`tools/arch.py`, shipped as `arm64Body` in the catalog):
+
+- **GPU driver tooling** (driver installs, DDU, vendor settings): ARM64
+  Windows has no discrete NVIDIA/AMD/Intel driver packages. GPU drivers
+  arrive through Windows Update and the device maker, so the replacement
+  opens Windows Update (or Device Manager, for driver removal) and logs
+  why.
+- **Kernel-driver tweaks** (controller overclock's hidusbf, MSI
+  Afterburner's RTCore64, the WHQL bypass, ReBAR, ULPS, discrete-GPU
+  registry tweaks): no ARM64 equivalent exists, so the replacement logs a
+  plain explanation and changes nothing, instead of pretending to work.
+- **Native payloads where they exist:** the Visual C++ script downloads
+  Microsoft's official ARM64 redistributable for the 2015-2022 pack
+  (2005-2013 packs were never made for ARM64 and install under emulation),
+  and scripts that fetch 7-Zip get the official ARM64 installer.
+- Everything else (registry, policy, bcdedit, services, user-mode
+  downloads under emulation) is architecture neutral and runs as-is.
+
 ## Credits and license
 
 All tweak logic is from [FR33THYFR33THY/Ultimate](https://github.com/FR33THYFR33THY/Ultimate),

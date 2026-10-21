@@ -53,25 +53,21 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
-      - name: Publish app (win-x64)
-        run: >
-          dotnet publish src/UltimateWinUI/UltimateWinUI.csproj
-          -c Release -r win-x64 --self-contained true
-          -o artifacts/publish/win-x64
+      - name: Publish app (win-x64 + win-arm64)
+        run: |
+          dotnet publish src/UltimateWinUI/UltimateWinUI.csproj -c Release -r win-x64 --self-contained true -o artifacts/publish/win-x64
+          dotnet publish src/UltimateWinUI/UltimateWinUI.csproj -c Release -r win-arm64 --self-contained true -o artifacts/publish/win-arm64
 
       - name: Install Inno Setup
         run: choco install innosetup -y --no-progress
 
-      - name: Build installer
+      - name: Build installers (x64 + arm64)
         shell: pwsh
-        run: >
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
-          /DAppVersion=1.0.0
-          /DPublishDir=..\artifacts\publish\win-x64
-          /Oartifacts
-          installer\UltimateWinUI.iss
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=1.0.0 /DPublishDir=..\artifacts\publish\win-x64 /DOutName=UltimateWinUI-Setup-1.0.0-x64 /Oartifacts installer\UltimateWinUI.iss
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=1.0.0 /DPublishDir=..\artifacts\publish\win-arm64 /DOutName=UltimateWinUI-Setup-1.0.0-arm64 /DArchAllowed=arm64 /DIn64Bit=arm64 /Oartifacts installer\UltimateWinUI.iss
 
-      - name: Upload installer
+      - name: Upload installers
         uses: actions/upload-artifact@v4
         with:
           name: UltimateWinUI-Setup
@@ -94,7 +90,7 @@ jobs:
       - name: Install app
         shell: pwsh
         run: |
-          $setup = Get-ChildItem artifacts/UltimateWinUI-Setup-*.exe | Select-Object -First 1
+          $setup = Get-ChildItem artifacts/UltimateWinUI-Setup-*-x64.exe | Select-Object -First 1
           Start-Process $setup.FullName -ArgumentList "/SILENT","/SUPPRESSMSGBOXES","/NORESTART" -Wait
 
       - name: Capture screenshots

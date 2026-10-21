@@ -8,6 +8,15 @@
 #ifndef PublishDir
   #define PublishDir "..\artifacts\publish\win-x64"
 #endif
+#ifndef OutName
+  #define OutName "UltimateWinUI-Setup-" + AppVersion
+#endif
+#ifndef ArchAllowed
+  #define ArchAllowed "x64compatible"
+#endif
+#ifndef In64Bit
+  #define In64Bit "x64compatible"
+#endif
 
 [Setup]
 AppId={{8F3B0C6A-9A41-4E2E-B5E7-3C2D1A0F9E77}
@@ -17,12 +26,13 @@ AppPublisher=UltimateWinUI contributors
 DefaultDirName={autopf}\UltimateWinUI
 DefaultGroupName=UltimateWinUI
 DisableProgramGroupPage=yes
-OutputBaseFilename=UltimateWinUI-Setup-{#AppVersion}
+OutputBaseFilename={#OutName}
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
 PrivilegesRequired=admin
-ArchitecturesInstallIn64BitMode=x64compatible
+ArchitecturesAllowed={#ArchAllowed}
+ArchitecturesInstallIn64BitMode={#In64Bit}
 UninstallDisplayIcon={app}\UltimateWinUI.exe
 
 [Tasks]

@@ -113,6 +113,8 @@ public sealed class TweakOption
     [JsonPropertyName("kind")] public string Kind { get; set; } = "apply";
     [JsonPropertyName("target")] public string? Target { get; set; }
     [JsonPropertyName("body")] public string Body { get; set; } = "";
+    /// <summary>Body variant with native ARM64 payloads, used automatically on ARM64.</summary>
+    [JsonPropertyName("arm64Body")] public string? Arm64Body { get; set; }
     [JsonPropertyName("signature")] public List<SigEntry>? Signature { get; set; }
     [JsonPropertyName("deletes")] public List<SigEntry>? Deletes { get; set; }
     /// <summary>Prompts for values the script asks via Read-Host (fed through stdin).</summary>

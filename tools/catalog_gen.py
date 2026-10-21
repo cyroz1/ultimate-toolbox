@@ -28,6 +28,21 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from descriptions import DESCRIPTIONS
+from arch import ARM64_BODIES, ARM64_BODY_SWAPS
+
+
+def arm64_variant(script_path: str, body: str):
+    if script_path in ARM64_BODIES:
+        return ARM64_BODIES[script_path]
+    swaps = ARM64_BODY_SWAPS.get(script_path)
+    if not swaps:
+        return None
+    out = body
+    for old, new in swaps:
+        if old not in out:
+            return None
+        out = out.replace(old, new)
+    return out if out != body else None
 
 CATEGORY_META = {
     "1 Check":     ("Check",     "Diagnostics and benchmarks for BIOS, storage, RAM, GPU and CPU."),
@@ -277,6 +292,12 @@ def main() -> int:
 
             control = control_for(options)
             stats[control] += 1
+            script_path = f"{folder.name}/{ps1.name}"
+            for opt in options:
+                if opt.get("body"):
+                    variant = arm64_variant(script_path, opt["body"])
+                    if variant:
+                        opt["arm64Body"] = variant
             recommended = next((o["label"] for o in options
                                 if "recommended" in o["label"].lower()), None)
             tweak = {

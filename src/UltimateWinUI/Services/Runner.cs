@@ -42,9 +42,14 @@ public sealed class Runner
 
         var fileName = $"{Sanitize(tweak.Id)}-{Sanitize(option.Label)}.ps1";
         var path = Path.Combine(_workDir, fileName);
+        var isArm64 = System.Runtime.InteropServices.RuntimeInformation.OSArchitecture ==
+                      System.Runtime.InteropServices.Architecture.Arm64;
+        var body = isArm64 && option.Arm64Body != null ? option.Arm64Body : option.Body;
+        if (isArm64 && option.Arm64Body != null)
+            _log.Write("Using the ARM64 variant of this script (native ARM64 payload).");
         var script = "$ErrorActionPreference = 'Continue'\n" +
                      "$ProgressPreference = 'SilentlyContinue'\n" +
-                     option.Body;
+                     body;
         await File.WriteAllTextAsync(path, script);
 
         _log.Write($"--- {tweak.Name} -> {option.Label} ---");
