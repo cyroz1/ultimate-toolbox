@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="UltimateWinUI.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer>
+        <StackPanel Margin="24,8,24,24">
+            <TextBlock Text="Settings" Style="{StaticResource PageTitleStyle}" />
+
+            <TextBlock Text="Applying tweaks" Style="{StaticResource SectionHeaderStyle}" />
+            <Border Style="{StaticResource TweakCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Create a restore point before applying" FontSize="14" />
+                        <TextBlock Style="{StaticResource CaptionStyle}"
+                                   Text="Runs Checkpoint-Computer before every apply or check script, same safety net the original library recommends." />
+                    </StackPanel>
+                    <ToggleSwitch x:Name="RestorePointToggle" Grid.Column="1" Toggled="RestorePointToggle_Toggled" />
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource TweakCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Confirm before running Advanced tweaks" FontSize="14" />
+                        <TextBlock Style="{StaticResource CaptionStyle}"
+                                   Text="Advanced tweaks can disable Defender, the firewall, UAC, mitigations and similar protections." />
+                    </StackPanel>
+                    <ToggleSwitch x:Name="ConfirmAdvancedToggle" Grid.Column="1" Toggled="ConfirmAdvancedToggle_Toggled" />
+                </Grid>
+            </Border>
+
+            <TextBlock Text="Appearance" Style="{StaticResource SectionHeaderStyle}" />
+            <Border Style="{StaticResource TweakCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Theme" FontSize="14" />
+                        <TextBlock Style="{StaticResource CaptionStyle}" Text="Follows the Windows Settings app look. System matches Windows." />
+                    </StackPanel>
+                    <ComboBox x:Name="ThemeCombo" Grid.Column="1" MinWidth="140" SelectionChanged="ThemeCombo_SelectionChanged">
+                        <ComboBoxItem Content="System" />
+                        <ComboBoxItem Content="Light" />
+                        <ComboBoxItem Content="Dark" />
+                    </ComboBox>
+                </Grid>
+            </Border>
+
+            <TextBlock Text="Data" Style="{StaticResource SectionHeaderStyle}" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Content="Re-detect all states" Click="Redetect_Click" />
+                <Button Content="Open data folder" Click="OpenData_Click" />
+                <Button Content="Open logs folder" Click="OpenLogs_Click" />
+            </StackPanel>
+            <TextBlock Style="{StaticResource CaptionStyle}" Margin="0,8,0,0"
+                       Text="Applied states, settings and logs live in %LocalAppData%\UltimateWinUI and survive restarts and reinstalls." />
+
+            <TextBlock Text="About" Style="{StaticResource SectionHeaderStyle}" />
+            <Border Style="{StaticResource TweakCardStyle}">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="UltimateWinUI 1.0.0" FontSize="14" FontWeight="SemiBold" />
+                    <TextBlock Style="{StaticResource CaptionStyle}" FontSize="13"
+                               Text="A native WinUI 3 front end for the FR33THY Ultimate Windows optimization script library. All tweak logic comes from the original scripts, MIT licensed, (c) FR33THY. This app only wraps them: it detects current states, runs the chosen option hidden, logs the output, and remembers what was applied." />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <HyperlinkButton Content="FR33THY Ultimate on GitHub" NavigateUri="https://github.com/FR33THYFR33THY/Ultimate" />
+                        <HyperlinkButton Content="Video guide" NavigateUri="https://youtu.be/Xc7l8PCTJyg" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

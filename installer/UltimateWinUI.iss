@@ -1,0 +1,39 @@
+; UltimateWinUI installer (Inno Setup 6)
+; Build: iscc /DAppVersion=1.0.0 /DPublishDir=<dotnet publish output> UltimateWinUI.iss
+; CI passes both defines; the defaults below work for a local publish to ..\artifacts\publish\win-x64
+
+#ifndef AppVersion
+  #define AppVersion "1.0.0"
+#endif
+#ifndef PublishDir
+  #define PublishDir "..\artifacts\publish\win-x64"
+#endif
+
+[Setup]
+AppId={{8F3B0C6A-9A41-4E2E-B5E7-3C2D1A0F9E77}
+AppName=UltimateWinUI
+AppVersion={#AppVersion}
+AppPublisher=UltimateWinUI contributors
+DefaultDirName={autopf}\UltimateWinUI
+DefaultGroupName=UltimateWinUI
+DisableProgramGroupPage=yes
+OutputBaseFilename=UltimateWinUI-Setup-{#AppVersion}
+Compression=lzma2
+SolidCompression=yes
+WizardStyle=modern
+PrivilegesRequired=admin
+ArchitecturesInstallIn64BitMode=x64compatible
+UninstallDisplayIcon={app}\UltimateWinUI.exe
+
+[Tasks]
+Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional icons:"
+
+[Files]
+Source: "{#PublishDir}\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs ignoreversion
+
+[Icons]
+Name: "{group}\UltimateWinUI"; Filename: "{app}\UltimateWinUI.exe"
+Name: "{autodesktop}\UltimateWinUI"; Filename: "{app}\UltimateWinUI.exe"; Tasks: desktopicon
+
+[Run]
+Filename: "{app}\UltimateWinUI.exe"; Description: "Launch UltimateWinUI"; Flags: nowait postinstall skipifsilent

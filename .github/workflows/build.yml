@@ -1,0 +1,109 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      screenshots:
+        description: "Also try to capture UI screenshots (best effort on hosted runners)"
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        rid: [win-x64, win-arm64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Publish app (${{ matrix.rid }})
+        run: >
+          dotnet publish src/UltimateWinUI/UltimateWinUI.csproj
+          -c Release -r ${{ matrix.rid }} --self-contained true
+          -o artifacts/publish/${{ matrix.rid }}
+
+      - name: Zip portable build
+        shell: pwsh
+        run: Compress-Archive -Path artifacts/publish/${{ matrix.rid }}/* -DestinationPath artifacts/UltimateWinUI-${{ matrix.rid }}.zip
+
+      - name: Upload portable build
+        uses: actions/upload-artifact@v4
+        with:
+          name: UltimateWinUI-${{ matrix.rid }}
+          path: artifacts/UltimateWinUI-${{ matrix.rid }}.zip
+
+  installer:
+    runs-on: windows-latest
+    needs: build
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Publish app (win-x64)
+        run: >
+          dotnet publish src/UltimateWinUI/UltimateWinUI.csproj
+          -c Release -r win-x64 --self-contained true
+          -o artifacts/publish/win-x64
+
+      - name: Install Inno Setup
+        run: choco install innosetup -y --no-progress
+
+      - name: Build installer
+        shell: pwsh
+        run: >
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          /DAppVersion=1.0.0
+          /DPublishDir=..\artifacts\publish\win-x64
+          /Oartifacts
+          installer\UltimateWinUI.iss
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: UltimateWinUI-Setup
+          path: artifacts/UltimateWinUI-Setup-*.exe
+
+  screenshots:
+    runs-on: windows-latest
+    needs: installer
+    if: github.event_name == 'workflow_dispatch' && inputs.screenshots
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download installer
+        uses: actions/download-artifact@v4
+        with:
+          name: UltimateWinUI-Setup
+          path: artifacts
+
+      - name: Install app
+        shell: pwsh
+        run: |
+          $setup = Get-ChildItem artifacts/UltimateWinUI-Setup-*.exe | Select-Object -First 1
+          Start-Process $setup.FullName -ArgumentList "/SILENT","/SUPPRESSMSGBOXES","/NORESTART" -Wait
+
+      - name: Capture screenshots
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File tools/screenshot.ps1 -OutDir screenshots
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots/*.png
+          if-no-files-found: warn

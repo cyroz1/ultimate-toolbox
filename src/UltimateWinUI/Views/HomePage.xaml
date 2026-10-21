@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="UltimateWinUI.Views.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:UltimateWinUI.Models">
+    <ScrollViewer>
+        <StackPanel Margin="24,8,24,24">
+            <TextBlock Text="Home" Style="{StaticResource PageTitleStyle}" />
+            <TextBlock Style="{StaticResource CaptionStyle}" FontSize="13"
+                       Text="The FR33THY Ultimate tweak library as a native settings app. Every tweak runs hidden, states are detected from the registry where the scripts allow it, and everything the app applies is remembered across restarts." />
+
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,16,0,0">
+                <Border Style="{StaticResource TweakCardStyle}" Width="180" Margin="0">
+                    <StackPanel>
+                        <TextBlock x:Name="TweakCountText" FontSize="24" FontWeight="SemiBold" Text="0" />
+                        <TextBlock Text="Tweaks" Style="{StaticResource CaptionStyle}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource TweakCardStyle}" Width="180" Margin="0">
+                    <StackPanel>
+                        <TextBlock x:Name="DetectedCountText" FontSize="24" FontWeight="SemiBold" Text="0" />
+                        <TextBlock Text="States detected live" Style="{StaticResource CaptionStyle}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource TweakCardStyle}" Width="180" Margin="0">
+                    <StackPanel>
+                        <TextBlock x:Name="AppliedCountText" FontSize="24" FontWeight="SemiBold" Text="0" />
+                        <TextBlock Text="Applied through the app" Style="{StaticResource CaptionStyle}" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,16,0,0">
+                <Button Content="Re-detect all states" Click="Redetect_Click" />
+                <Button Content="Open logs" Click="Logs_Click" />
+            </StackPanel>
+
+            <TextBlock Text="Categories" Style="{StaticResource SectionHeaderStyle}" />
+            <GridView x:Name="CategoryGrid" IsItemClickEnabled="True" ItemClick="CategoryGrid_ItemClick"
+                      SelectionMode="None">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Category">
+                        <Border Style="{StaticResource TweakCardStyle}" Width="250" Margin="0,0,8,8">
+                            <StackPanel Spacing="6">
+                                <FontIcon Glyph="{x:Bind IconGlyph}" FontSize="20" HorizontalAlignment="Left" />
+                                <TextBlock Text="{x:Bind Name}" FontWeight="SemiBold" FontSize="14" />
+                                <TextBlock Text="{x:Bind Description}" Style="{StaticResource CaptionStyle}" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+
+            <TextBlock Text="Notes" Style="{StaticResource SectionHeaderStyle}" />
+            <TextBlock Style="{StaticResource CaptionStyle}" FontSize="13"
+                       Text="Most tweaks need a restart before they fully apply, same as the original scripts. Advanced tweaks can disable security features; the app asks before running them and creates a restore point first (both can be changed in Settings). Script output never opens a console, it goes to Logs." />
+        </StackPanel>
+    </ScrollViewer>
+</Page>

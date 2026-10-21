@@ -1,0 +1,106 @@
+# UltimateWinUI
+
+A native **WinUI 3** front end for the [FR33THY Ultimate](https://github.com/FR33THYFR33THY/Ultimate)
+Windows optimization script library, styled after the Windows Settings app
+(the same idea as the AtlasOS toolbox, but for this script library).
+
+![status](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
+
+## What it does
+
+- **All 104 scripts** from the library, organized in the library's own 8
+  categories: Check, Refresh, Setup, Installers, Graphics, Windows, Hardware,
+  Advanced.
+- **The right control for every tweak**, generated from the script itself:
+  - 2 options -> a **toggle switch**
+  - 3+ options -> a **dropdown** + Apply
+  - a script that only opens something -> a **button / link** (settings pages,
+    control panel applets, websites, other apps)
+  - multi-action scripts -> one button per action
+  - scripts with a *Check* option -> a **Check** button that runs it and shows
+    the output in Logs
+- **State detection.** The catalog generator extracts the registry writes each
+  option performs. On launch the app reads those values back from the live
+  registry and shows which state every tweak is actually in. For tweaks that
+  are not registry backed, the app remembers what it last applied. Both are
+  saved in `%LocalAppData%\UltimateWinUI` and **survive restarts**.
+- **No consoles.** The app runs elevated, so scripts never relaunch themselves
+  into a visible PowerShell window. Script output is piped into the in-app
+  **Logs** page (and a log file). Consoles only exist if you open the log file
+  yourself.
+- **Safety nets, on by default:** a restore point before every apply, and a
+  confirmation dialog before running anything from the Advanced category
+  (Defender, firewall, UAC, mitigations and friends). Both can be turned off
+  in Settings.
+
+## How it works
+
+The app never reimplements tweak logic in C#. `tools/catalog_gen.py` parses
+the upstream scripts once and produces `Assets/tweaks.json`:
+
+- folder -> category, file name -> tweak, `Write-Host` menu -> options,
+  switch-case bodies -> the exact script text to run per option
+- each option's registry writes become its detection **signature**
+
+At runtime, choosing an option writes its body to a temp .ps1 and runs it
+hidden with Windows PowerShell, elevated, with stdout/stderr streamed to the
+log. The original scripts are also bundled under `Assets/Scripts` untouched.
+
+To refresh the catalog from a newer upstream release:
+
+```powershell
+git clone https://github.com/FR33THYFR33THY/Ultimate ..\Ultimate
+python tools\catalog_gen.py ..\Ultimate src\UltimateWinUI\Assets\Scripts src\UltimateWinUI\Assets\tweaks.json
+```
+
+## Build
+
+Requires Windows + the .NET 8 SDK. WinUI 3 cannot be built on Linux/macOS.
+
+```powershell
+dotnet publish src\UltimateWinUI\UltimateWinUI.csproj -c Release -r win-x64 --self-contained true -o artifacts\publish\win-x64
+```
+
+Installer (Inno Setup 6):
+
+```powershell
+& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DPublishDir=..\artifacts\publish\win-x64 /Oartifacts installer\UltimateWinUI.iss
+```
+
+## CI
+
+`.github/workflows/build.yml` runs on every push:
+
+- publishes self-contained **win-x64** and **win-arm64** builds and uploads
+  portable zips
+- builds the **Inno Setup installer** and uploads it as an artifact
+- a manually dispatched run can also try to capture **UI screenshots**
+  (`tools/screenshot.ps1`, the app accepts `--page home|category:<name>|logs|settings`).
+  GitHub hosted runners live in session 0, so captures there are best effort;
+  run the script on a real desktop for README quality shots.
+
+## Layout
+
+```
+src/UltimateWinUI/
+  App.xaml(.cs)            services bootstrap + shared apply pipeline
+  MainWindow.xaml(.cs)     NavigationView shell, search, theme, info bar
+  Models/Catalog.cs        catalog types (tweaks.json shape)
+  Services/
+    CatalogService.cs      catalog load, settings, data dir
+    Detector.cs            registry signature matching -> live state
+    Runner.cs              hidden elevated PowerShell runner + launcher
+    LogService.cs          in-app log + log file
+  Views/                   Home, Category (data-driven cards), Logs, Settings
+  Assets/tweaks.json       generated catalog (do not hand edit)
+  Assets/Scripts/          pristine upstream scripts
+tools/catalog_gen.py       upstream scripts -> tweaks.json
+tools/screenshot.ps1       drives the installed app and captures pages
+installer/UltimateWinUI.iss
+```
+
+## Credits and license
+
+All tweak logic is from [FR33THYFR33THY/Ultimate](https://github.com/FR33THYFR33THY/Ultimate),
+MIT licensed, (c) FR33THY (see `Assets/UPSTREAM-LICENSE.txt`). This wrapper is
+an unofficial front end and is not affiliated with FR33THY.
