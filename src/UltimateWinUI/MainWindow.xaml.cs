@@ -90,12 +90,15 @@ public sealed partial class MainWindow : Window
         {
             case "home":
                 ContentFrame.Navigate(typeof(HomePage));
+                SelectNavigationItem(tag);
                 break;
             case "logs":
                 ContentFrame.Navigate(typeof(LogsPage));
+                SelectNavigationItem(tag);
                 break;
             case "settings":
                 ContentFrame.Navigate(typeof(SettingsPage));
+                SelectNavigationItem(tag);
                 break;
             default:
                 if (tag.StartsWith("category:", StringComparison.Ordinal))
@@ -105,6 +108,7 @@ public sealed partial class MainWindow : Window
                         if (cat.Name == name)
                         {
                             ContentFrame.Navigate(typeof(CategoryPage), cat);
+                            SelectNavigationItem(tag);
                             break;
                         }
                 }
@@ -113,6 +117,38 @@ public sealed partial class MainWindow : Window
                     ContentFrame.Navigate(typeof(CategoryPage), tag);
                 }
                 break;
+        }
+    }
+
+    private void SelectNavigationItem(string tag)
+    {
+        foreach (var candidate in NavView.MenuItems)
+            if (candidate is NavigationViewItem item && item.Tag is string itemTag && itemTag == tag)
+            {
+                SetSelectedNavigationItem(item);
+                return;
+            }
+
+        foreach (var candidate in NavView.FooterMenuItems)
+            if (candidate is NavigationViewItem footerItem && footerItem.Tag is string footerTag && footerTag == tag)
+            {
+                SetSelectedNavigationItem(footerItem);
+                return;
+            }
+    }
+
+    private void SetSelectedNavigationItem(NavigationViewItem item)
+    {
+        if (NavView.SelectedItem == item) return;
+
+        _suppressSelection = true;
+        try
+        {
+            NavView.SelectedItem = item;
+        }
+        finally
+        {
+            _suppressSelection = false;
         }
     }
 

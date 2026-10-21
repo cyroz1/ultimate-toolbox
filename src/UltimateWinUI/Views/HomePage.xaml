@@ -37,17 +37,21 @@
             </StackPanel>
 
             <TextBlock Text="Categories" Style="{StaticResource SectionHeaderStyle}" />
-            <GridView x:Name="CategoryGrid" IsItemClickEnabled="True" ItemClick="CategoryGrid_ItemClick"
-                      SelectionMode="None">
+            <GridView x:Name="CategoryGrid" SelectionMode="None">
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="models:Category">
-                        <Border Style="{StaticResource TweakCardStyle}" Width="250" Margin="0,0,8,8">
-                            <StackPanel Spacing="6">
-                                <FontIcon Glyph="{x:Bind IconGlyph}" FontSize="20" HorizontalAlignment="Left" />
-                                <TextBlock Text="{x:Bind Name}" FontWeight="SemiBold" FontSize="14" />
-                                <TextBlock Text="{x:Bind Description}" Style="{StaticResource CaptionStyle}" />
-                            </StackPanel>
-                        </Border>
+                        <Button Click="CategoryButton_Click"
+                                AutomationProperties.Name="{x:Bind Name}"
+                                Background="Transparent" BorderThickness="0" Padding="0"
+                                HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                            <Border Style="{StaticResource TweakCardStyle}" Width="250" Margin="0,0,8,8">
+                                <StackPanel Spacing="6">
+                                    <FontIcon Glyph="{x:Bind IconGlyph}" FontSize="20" HorizontalAlignment="Left" />
+                                    <TextBlock Text="{x:Bind Name}" FontWeight="SemiBold" FontSize="14" />
+                                    <TextBlock Text="{x:Bind Description}" Style="{StaticResource CaptionStyle}" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
                     </DataTemplate>
                 </GridView.ItemTemplate>
             </GridView>

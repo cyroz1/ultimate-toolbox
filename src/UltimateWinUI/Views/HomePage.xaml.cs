@@ -38,9 +38,9 @@ public sealed partial class HomePage : Page
         AppliedCountText.Text = applied.ToString();
     }
 
-    private void CategoryGrid_ItemClick(object sender, ItemClickEventArgs e)
+    private void CategoryButton_Click(object sender, RoutedEventArgs e)
     {
-        if (e.ClickedItem is Category cat)
+        if (sender is FrameworkElement { DataContext: Category cat })
             App.Window.NavigateTo("category:" + cat.Name);
     }
 

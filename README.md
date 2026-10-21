@@ -58,13 +58,13 @@ python tools\catalog_gen.py ..\Ultimate src\UltimateWinUI\Assets\Scripts src\Ult
 Requires Windows + the .NET 8 SDK. WinUI 3 cannot be built on Linux/macOS.
 
 ```powershell
-dotnet publish src\UltimateWinUI\UltimateWinUI.csproj -c Release -r win-x64 --self-contained true -o artifacts\publish\win-x64
+dotnet publish src\UltimateWinUI\UltimateWinUI.csproj -c Release -r win-x64 --self-contained true -p:Version=1.0.1 -o artifacts\publish\win-x64
 ```
 
 Installer (Inno Setup 6), for x64:
 
 ```powershell
-& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=1.0.0 /DPublishDir=..\artifacts\publish\win-x64 /DOutName=UltimateWinUI-x64-Setup-1.0.0 /DArchAllowed=x64compatible /DIn64Bit=x64compatible /Oartifacts installer\UltimateWinUI.iss
+& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=1.0.1 /DPublishDir=..\artifacts\publish\win-x64 /DOutName=UltimateWinUI-x64-Setup-1.0.1 /DArchAllowed=x64compatible /DIn64Bit=x64compatible /Oartifacts installer\UltimateWinUI.iss
 ```
 
 ## CI
