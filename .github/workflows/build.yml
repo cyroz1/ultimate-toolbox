@@ -1,105 +1,127 @@
-name: Build
+name: Build and publish release
 
 on:
   push:
-    branches: [main]
-  pull_request:
-  workflow_dispatch:
-    inputs:
-      screenshots:
-        description: "Also try to capture UI screenshots (best effort on hosted runners)"
-        type: boolean
-        default: false
+    tags:
+      - 'v*'
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  build:
+  build-installer:
+    name: Build ${{ matrix.arch }} installer
     runs-on: windows-latest
+    permissions:
+      contents: read
     strategy:
+      fail-fast: false
       matrix:
-        rid: [win-x64, win-arm64]
+        include:
+          - arch: x64
+            runtime: win-x64
+            platform: x64
+            allowed_arch: x64compatible
+            install_mode: x64compatible
+          - arch: arm64
+            runtime: win-arm64
+            platform: arm64
+            allowed_arch: arm64
+            install_mode: arm64
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out source
+        uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: Set up .NET 8
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "8.0.x"
+          dotnet-version: 8.0.x
 
-      - name: Publish app (${{ matrix.rid }})
-        run: >
-          dotnet publish src/UltimateWinUI/UltimateWinUI.csproj
-          -c Release -r ${{ matrix.rid }} --self-contained true
-          -o artifacts/publish/${{ matrix.rid }}
-
-      - name: Zip portable build
+      - name: Install Inno Setup 6
         shell: pwsh
-        run: Compress-Archive -Path artifacts/publish/${{ matrix.rid }}/* -DestinationPath artifacts/UltimateWinUI-${{ matrix.rid }}.zip
+        run: choco install innosetup --yes --no-progress
 
-      - name: Upload portable build
+      - name: Publish and create installer
+        shell: pwsh
+        env:
+          ARCH: ${{ matrix.arch }}
+          RUNTIME: ${{ matrix.runtime }}
+          PLATFORM: ${{ matrix.platform }}
+          ALLOWED_ARCH: ${{ matrix.allowed_arch }}
+          INSTALL_MODE: ${{ matrix.install_mode }}
+        run: |
+          $version = $env:GITHUB_REF_NAME -replace '^v', ''
+          if ($version -notmatch '^\d+\.\d+\.\d+([.-].*)?$') {
+            throw "Release tag '$env:GITHUB_REF_NAME' must use vMAJOR.MINOR.PATCH format."
+          }
+
+          $publishDir = Join-Path $env:GITHUB_WORKSPACE "artifacts/publish/$env:RUNTIME"
+          $installerDir = Join-Path $env:GITHUB_WORKSPACE "artifacts/installers"
+          New-Item -ItemType Directory -Force -Path $publishDir, $installerDir | Out-Null
+
+          dotnet publish src/UltimateWinUI/UltimateWinUI.csproj `
+            --configuration Release `
+            --runtime $env:RUNTIME `
+            --self-contained true `
+            -p:Platform=$env:PLATFORM `
+            -p:Version=$version `
+            --output $publishDir
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $iscc = Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6/ISCC.exe'
+          if (-not (Test-Path $iscc)) { throw "Inno Setup compiler not found at $iscc" }
+          & $iscc `
+            "/DAppVersion=$version" `
+            "/DPublishDir=$publishDir" `
+            "/DOutName=UltimateWinUI-$env:ARCH-Setup-$version" `
+            "/DArchAllowed=$env:ALLOWED_ARCH" `
+            "/DIn64Bit=$env:INSTALL_MODE" `
+            "/O$installerDir" `
+            installer/UltimateWinUI.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: UltimateWinUI-${{ matrix.rid }}
-          path: artifacts/UltimateWinUI-${{ matrix.rid }}.zip
+          name: ${{ matrix.arch }}-installer
+          path: artifacts/installers/*.exe
+          if-no-files-found: error
+          retention-days: 7
 
-  installer:
-    runs-on: windows-latest
-    needs: build
-    if: github.event_name != 'pull_request'
+  publish-release:
+    name: Publish GitHub release
+    needs: build-installer
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "8.0.x"
-
-      - name: Publish app (win-x64 + win-arm64)
-        run: |
-          dotnet publish src/UltimateWinUI/UltimateWinUI.csproj -c Release -r win-x64 --self-contained true -o artifacts/publish/win-x64
-          dotnet publish src/UltimateWinUI/UltimateWinUI.csproj -c Release -r win-arm64 --self-contained true -o artifacts/publish/win-arm64
-
-      - name: Install Inno Setup
-        run: choco install innosetup -y --no-progress
-
-      - name: Build installers (x64 + arm64)
-        shell: pwsh
-        run: |
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=1.0.0 /DPublishDir=..\artifacts\publish\win-x64 /DOutName=UltimateWinUI-Setup-1.0.0-x64 /Oartifacts installer\UltimateWinUI.iss
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=1.0.0 /DPublishDir=..\artifacts\publish\win-arm64 /DOutName=UltimateWinUI-Setup-1.0.0-arm64 /DArchAllowed=arm64 /DIn64Bit=arm64 /Oartifacts installer\UltimateWinUI.iss
-
-      - name: Upload installers
-        uses: actions/upload-artifact@v4
-        with:
-          name: UltimateWinUI-Setup
-          path: artifacts/UltimateWinUI-Setup-*.exe
-
-  screenshots:
-    runs-on: windows-latest
-    needs: installer
-    if: github.event_name == 'workflow_dispatch' && inputs.screenshots
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download installer
+      - name: Download installers
         uses: actions/download-artifact@v4
         with:
-          name: UltimateWinUI-Setup
+          pattern: '*-installer'
           path: artifacts
+          merge-multiple: true
 
-      - name: Install app
-        shell: pwsh
+      - name: Create release with notes and installers
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
-          $setup = Get-ChildItem artifacts/UltimateWinUI-Setup-*-x64.exe | Select-Object -First 1
-          Start-Process $setup.FullName -ArgumentList "/SILENT","/SUPPRESSMSGBOXES","/NORESTART" -Wait
+          version="${GITHUB_REF_NAME#v}"
+          expected_x64="UltimateWinUI-x64-Setup-${version}.exe"
+          expected_arm64="UltimateWinUI-arm64-Setup-${version}.exe"
+          mapfile -t installers < <(find artifacts -maxdepth 1 -type f -name '*.exe' -printf '%f\n' | sort)
 
-      - name: Capture screenshots
-        shell: pwsh
-        run: powershell -ExecutionPolicy Bypass -File tools/screenshot.ps1 -OutDir screenshots
+          if [[ "${installers[*]}" != "${expected_arm64} ${expected_x64}" ]]; then
+            printf 'Expected exactly %s and %s; found: %s\n' \
+              "$expected_x64" "$expected_arm64" "${installers[*]}" >&2
+            exit 1
+          fi
 
-      - name: Upload screenshots
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshots
-          path: screenshots/*.png
-          if-no-files-found: warn
+          gh release create "$GITHUB_REF_NAME" \
+            "artifacts/$expected_x64" \
+            "artifacts/$expected_arm64" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "UltimateWinUI $GITHUB_REF_NAME" \
+            --generate-notes
