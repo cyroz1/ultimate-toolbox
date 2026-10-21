@@ -106,7 +106,7 @@ public sealed class Runner
             CreateNoWindow = true,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
-            RedirectStandardInput = inputs != null,
+            RedirectStandardInput = true,
         };
         var proc = new Process { StartInfo = psi, EnableRaisingEvents = true };
         proc.OutputDataReceived += (_, e) => { if (e.Data != null) _log.Write(e.Data); };
@@ -121,14 +121,12 @@ public sealed class Runner
             proc.Start();
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
+            // Feed known Read-Host prompts, then close stdin so any prompt that
+            // was not represented in the app cannot hang in the hidden process.
             if (inputs != null)
-            {
-                // Feed the script's Read-Host prompts, then close stdin so any
-                // stray prompt gets EOF instead of hanging forever.
                 foreach (var line in inputs)
                     proc.StandardInput.WriteLine(line);
-                proc.StandardInput.Close();
-            }
+            proc.StandardInput.Close();
         }
         catch (Exception ex)
         {

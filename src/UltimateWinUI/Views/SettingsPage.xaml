@@ -17,7 +17,7 @@
                     <StackPanel Grid.Column="0">
                         <TextBlock Text="Create a restore point before applying" FontSize="14" />
                         <TextBlock Style="{StaticResource CaptionStyle}"
-                                   Text="Runs Checkpoint-Computer before every apply or check script, same safety net the original library recommends." />
+                                   Text="Optional safety snapshot before apply scripts. Off by default." />
                     </StackPanel>
                     <ToggleSwitch x:Name="RestorePointToggle" Grid.Column="1" Toggled="RestorePointToggle_Toggled" />
                 </Grid>

@@ -119,6 +119,8 @@ public sealed class TweakOption
     [JsonPropertyName("deletes")] public List<SigEntry>? Deletes { get; set; }
     /// <summary>Prompts for values the script asks via Read-Host (fed through stdin).</summary>
     [JsonPropertyName("inputs")] public List<string>? Inputs { get; set; }
+    /// <summary>Extra script output or interaction to review before running.</summary>
+    [JsonPropertyName("confirmation")] public string? ConfirmationMessage { get; set; }
 }
 
 /// <summary>One registry value an option writes; used for live state detection.</summary>
@@ -127,7 +129,7 @@ public sealed class SigEntry
     [JsonPropertyName("key")] public string Key { get; set; } = "";
     [JsonPropertyName("name")] public string Name { get; set; } = "";
     [JsonPropertyName("value")] public object? Value { get; set; }
-    /// <summary>dword | string | deleted</summary>
+    /// <summary>dword | qword | string | binary | deleted</summary>
     [JsonPropertyName("kind")] public string Kind { get; set; } = "dword";
 }
 

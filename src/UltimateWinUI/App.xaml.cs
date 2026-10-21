@@ -58,14 +58,43 @@ public partial class App : Application
     /// </summary>
     public static async Task<bool> ApplyOptionAsync(Tweak tweak, TweakOption option, System.Collections.Generic.IReadOnlyList<string>? inputs = null)
     {
-        if (tweak.Risk == "high" && Settings.ConfirmAdvanced && option.Kind == "apply")
+        var highRiskConfirmation = tweak.Risk == "high" && Settings.ConfirmAdvanced && option.Kind == "apply";
+        var scriptConfirmation = !string.IsNullOrWhiteSpace(option.ConfirmationMessage);
+        if (highRiskConfirmation || scriptConfirmation)
         {
+            var content = new StackPanel { Spacing = 8 };
+            if (highRiskConfirmation)
+            {
+                content.Children.Add(new TextBlock
+                {
+                    Text = $"\"{tweak.Name}\" is in the Advanced category. These tweaks can disable security features or change low level system behavior.",
+                    TextWrapping = TextWrapping.Wrap,
+                });
+            }
+            content.Children.Add(new TextBlock
+            {
+                Text = $"Run \"{option.Label}\" for {tweak.Name}?",
+                FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+                TextWrapping = TextWrapping.Wrap,
+            });
+            if (scriptConfirmation)
+            {
+                content.Children.Add(new ScrollViewer
+                {
+                    MaxHeight = 420,
+                    Content = new TextBlock
+                    {
+                        Text = option.ConfirmationMessage,
+                        TextWrapping = TextWrapping.Wrap,
+                        IsTextSelectionEnabled = true,
+                    },
+                });
+            }
+
             var dialog = new ContentDialog
             {
-                Title = "High risk tweak",
-                Content = $"\"{tweak.Name}\" is in the Advanced category. These tweaks can disable " +
-                          "security features or change low level system behavior.\n\n" +
-                          $"Run \"{option.Label}\"?",
+                Title = highRiskConfirmation ? "Review before running" : "Script instructions",
+                Content = content,
                 PrimaryButtonText = "Run",
                 CloseButtonText = "Cancel",
                 DefaultButton = ContentDialogButton.Close,
@@ -83,9 +112,15 @@ public partial class App : Application
                 await Runner.CreateRestorePointAsync();
 
             var exit = await Runner.RunOptionAsync(tweak, option, inputs);
-            if (option.Kind == "apply")
+            if (option.Kind == "apply" && exit == 0)
             {
                 Store.Set(tweak.Id, option.Label);
+                Detector.Detect(tweak, Store);
+            }
+            else if (option.Kind == "apply")
+            {
+                // A failed script must not replace the last known applied option.
+                // Re-detect in case it made a partial change that matches a signature.
                 Detector.Detect(tweak, Store);
             }
             Window.ShowInfo(

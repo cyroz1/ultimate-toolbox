@@ -282,7 +282,8 @@ public sealed partial class CategoryPage : Page
     {
         if (option.Inputs is not { Count: > 0 } prompts)
         {
-            await App.ApplyOptionAsync(tweak, option);
+            if (!await App.ApplyOptionAsync(tweak, option))
+                RefreshCards();
             return;
         }
 
@@ -305,11 +306,15 @@ public sealed partial class CategoryPage : Page
             XamlRoot = XamlRoot,
         };
         if (await dialog.ShowAsync() != ContentDialogResult.Primary)
+        {
+            RefreshCards();
             return;
+        }
 
         var answers = new List<string>();
         foreach (var box in boxes) answers.Add(box.Text.Trim());
-        await App.ApplyOptionAsync(tweak, option, answers);
+        if (!await App.ApplyOptionAsync(tweak, option, answers))
+            RefreshCards();
     }
 
     /// <summary>"Power Plan: On (Recommended)" -> "On (Recommended)" when it just repeats the tweak name.</summary>

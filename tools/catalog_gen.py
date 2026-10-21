@@ -71,6 +71,13 @@ SET_ITEMPROP = re.compile(
     r'(?:Set|New)-ItemProperty\s+(?:-Path\s+)?\\?"?([^"\s]+)\\?"?\s+-Name\s+\\?"([^"\\]+)\\?"\s+-Value\s+\$?\(?([0-9]+)',
     re.IGNORECASE)
 START_PROCESS = re.compile(r'Start-Process\s+(?:-FilePath\s+)?\\?"([^"\\]+)\\?"', re.IGNORECASE)
+WRITE_CONSOLE_LINE = re.compile(
+    r'^\s*(?:Write-(?:Host|Output|Information|Warning|Error)|echo)\s+'
+    r'(?:"((?:`.|[^"])*)"|\'((?:`.|[^\'])*)\'|[^\r\n]+)',
+    re.IGNORECASE | re.MULTILINE)
+CONSOLE_COMMAND = re.compile(
+    r'^\s*(?:Write-(?:Host|Output|Information|Warning|Error)|echo)\b',
+    re.IGNORECASE | re.MULTILINE)
 
 
 def strip_scaffolding(text: str) -> str:
@@ -165,7 +172,7 @@ def signature(body: str):
     sig = []
     seen = set()
     found = REG_ADD.findall(body) or REG_ADD_LOOSE.findall(body)
-    for key, name, _typ, val in found:
+    for key, name, reg_type, val in found:
         if key.startswith("$") or name.startswith("$"):
             continue
         if not key.upper().startswith(("HKLM", "HKCU", "HKEY")):
@@ -174,9 +181,24 @@ def signature(body: str):
         if ident in seen:
             continue
         seen.add(ident)
-        try:
-            sig.append({"key": key, "name": name, "value": int(val, 0), "kind": "dword"})
-        except ValueError:
+        kind = reg_type.upper()
+        if kind == "REG_BINARY":
+            binary = re.sub(r"[\s,]", "", val)
+            binary = re.sub(r"^0x", "", binary, flags=re.IGNORECASE)
+            if not binary or not re.fullmatch(r"[0-9a-fA-F]+", binary):
+                continue
+            sig.append({"key": key, "name": name, "value": binary.upper(), "kind": "binary"})
+        elif kind in ("REG_DWORD", "REG_QWORD"):
+            try:
+                number = int(val, 0)
+            except ValueError:
+                try:
+                    number = int(val, 10)
+                except ValueError:
+                    continue
+            sig.append({"key": key, "name": name, "value": number,
+                        "kind": "qword" if kind == "REG_QWORD" else "dword"})
+        else:
             sig.append({"key": key, "name": name, "value": val, "kind": "string"})
     for path, name, val in SET_ITEMPROP.findall(body):
         key = path.replace("HKLM:", "HKEY_LOCAL_MACHINE").replace("HKCU:", "HKEY_CURRENT_USER")
@@ -200,6 +222,50 @@ def extract_inputs(body: str):
         if p:
             prompts.append(p)
     return prompts
+
+
+def confirmation_message(body: str) -> str | None:
+    """Summarize console text and interactions the app cannot render itself."""
+    messages = []
+    has_unrendered_output = False
+    for match in WRITE_CONSOLE_LINE.finditer(body):
+        message = (match.group(1) if match.group(1) is not None else match.group(2))
+        if message is None:
+            has_unrendered_output = True
+            continue
+        message = (message.replace('`"', '"').replace('``', '`')
+                   .replace('`n', '\n').replace('`t', ' ')).strip()
+        # Variable interpolation would be misleading when shown before execution.
+        if message and '$' not in message:
+            if message not in messages:
+                messages.append(message)
+        elif message:
+            has_unrendered_output = True
+
+    notes = []
+    if CONSOLE_COMMAND.search(body):
+        if messages:
+            text = '\n'.join(messages)
+            if len(text) > 2400:
+                text = text[:2397].rstrip() + '...'
+            notes.append('Console messages that may appear:\n' + text)
+            if has_unrendered_output:
+                notes.append('Some console output depends on live values and appears only while the script runs.')
+        else:
+            notes.append('This option prints additional console messages while it runs.')
+
+    if re.search(r'^\s*Pause\s*$', body, re.IGNORECASE | re.MULTILINE):
+        notes.append('The original script pauses for console input; this Run/Cancel prompt replaces that pause.')
+    if re.search(r'\b(?:ShowDialog|PromptForChoice|ReadKey)\b', body, re.IGNORECASE):
+        notes.append('The script opens another prompt or dialog while it runs.')
+    if len(re.findall(r'\bRead-Host\b', body, re.IGNORECASE)) > len(extract_inputs(body)):
+        notes.append('The script requests console input beyond values collected in the app.')
+    if re.search(r'\bshutdown(?:\.exe)?\b[^\r\n]*(?:/r|/fw)|\bRestart-Computer\b', body, re.IGNORECASE):
+        notes.append('This option restarts the PC or opens BIOS/UEFI setup.')
+    if re.search(r'RadeonSoftware\.exe', body, re.IGNORECASE):
+        notes.append('This option opens AMD Software briefly while applying AMD settings.')
+
+    return '\n\n'.join(notes) if notes else None
 
 
 def classify_option(label: str, body: str) -> str:
@@ -249,7 +315,8 @@ def main() -> int:
             options = []
             if menu_items and cases:
                 for num, label in menu_items:
-                    body = clean_body(cases.get(num, ""))
+                    raw_body = cases.get(num, "")
+                    body = clean_body(raw_body)
                     kind = classify_option(label, body)
                     if kind in ("apply", "check") and not body.strip():
                         continue  # e.g. a menu "Exit" entry with no real body
@@ -269,6 +336,9 @@ def main() -> int:
                     inputs = extract_inputs(body)
                     if inputs:
                         opt["inputs"] = inputs
+                    confirmation = confirmation_message(raw_body)
+                    if confirmation:
+                        opt["confirmation"] = confirmation
                     options.append(opt)
             else:
                 # no menu: whole script is one action
@@ -288,6 +358,9 @@ def main() -> int:
                     inputs = extract_inputs(body)
                     if inputs:
                         opt["inputs"] = inputs
+                    confirmation = confirmation_message(text)
+                    if confirmation:
+                        opt["confirmation"] = confirmation
                     options.append(opt)
 
             control = control_for(options)

@@ -40,9 +40,10 @@ public static class CatalogService
 /// <summary>Small user settings, persisted as JSON in the data dir.</summary>
 public sealed class AppSettings
 {
-    public bool CreateRestorePointBeforeApply { get; set; } = true;
+    public bool CreateRestorePointBeforeApply { get; set; } = false;
     public bool ConfirmAdvanced { get; set; } = true;
     public string Theme { get; set; } = "System"; // System | Light | Dark
+    public int? SettingsVersion { get; set; }
 
     private static string FilePath => Path.Combine(CatalogService.DataDir, "settings.json");
 
@@ -51,10 +52,21 @@ public sealed class AppSettings
         try
         {
             if (File.Exists(FilePath))
-                return JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(FilePath)) ?? new AppSettings();
+            {
+                var settings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(FilePath)) ?? new AppSettings();
+                if (!settings.SettingsVersion.HasValue || settings.SettingsVersion.Value < 2)
+                {
+                    // Version 1 defaulted restore points on for every apply.
+                    // Migrate that implicit default to off; users can opt in again.
+                    settings.CreateRestorePointBeforeApply = false;
+                    settings.SettingsVersion = 2;
+                    settings.Save();
+                }
+                return settings;
+            }
         }
         catch { /* fall through to defaults */ }
-        return new AppSettings();
+        return new AppSettings { SettingsVersion = 2 };
     }
 
     public void Save()
@@ -78,6 +90,7 @@ public sealed class StateStore
     }
 
     private readonly Dictionary<string, Record> _records;
+    private readonly object _sync = new();
     private static string FilePath => Path.Combine(CatalogService.DataDir, "state.json");
 
     public StateStore()
@@ -94,12 +107,21 @@ public sealed class StateStore
         catch { /* start empty */ }
     }
 
-    public Record? Get(string tweakId) => _records.TryGetValue(tweakId, out var r) ? r : null;
+    public Record? Get(string tweakId)
+    {
+        lock (_sync)
+            return _records.TryGetValue(tweakId, out var record)
+                ? new Record { OptionLabel = record.OptionLabel, AppliedUtc = record.AppliedUtc }
+                : null;
+    }
 
     public void Set(string tweakId, string optionLabel)
     {
-        _records[tweakId] = new Record { OptionLabel = optionLabel, AppliedUtc = DateTimeOffset.UtcNow };
-        Save();
+        lock (_sync)
+        {
+            _records[tweakId] = new Record { OptionLabel = optionLabel, AppliedUtc = DateTimeOffset.UtcNow };
+            Save();
+        }
     }
 
     private void Save()
