@@ -61,23 +61,18 @@ Requires Windows + the .NET 8 SDK. WinUI 3 cannot be built on Linux/macOS.
 dotnet publish src\UltimateWinUI\UltimateWinUI.csproj -c Release -r win-x64 --self-contained true -o artifacts\publish\win-x64
 ```
 
-Installer (Inno Setup 6):
+Installer (Inno Setup 6), for x64:
 
 ```powershell
-& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DPublishDir=..\artifacts\publish\win-x64 /Oartifacts installer\UltimateWinUI.iss
+& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=1.0.0 /DPublishDir=..\artifacts\publish\win-x64 /DOutName=UltimateWinUI-x64-Setup-1.0.0 /DArchAllowed=x64compatible /DIn64Bit=x64compatible /Oartifacts installer\UltimateWinUI.iss
 ```
 
 ## CI
 
-`.github/workflows/build.yml` runs on every push:
-
-- publishes self-contained **win-x64** and **win-arm64** builds and uploads
-  portable zips
-- builds the **Inno Setup installer** and uploads it as an artifact
-- a manually dispatched run can also try to capture **UI screenshots**
-  (`tools/screenshot.ps1`, the app accepts `--page home|category:<name>|logs|settings`).
-  GitHub hosted runners live in session 0, so captures there are best effort;
-  run the script on a real desktop for README quality shots.
+`.github/workflows/release.yml` runs when a `v*` tag is pushed. It builds only
+the self-contained x64 and ARM64 Inno Setup installers, then creates and
+publishes a GitHub release with generated release notes and both installers
+attached. The first release uses the `v1.0.0` tag.
 
 ## Layout
 
