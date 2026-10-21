@@ -37,6 +37,7 @@ public sealed class Tweak
 {
     [JsonPropertyName("id")] public string Id { get; set; } = "";
     [JsonPropertyName("name")] public string Name { get; set; } = "";
+    [JsonPropertyName("description")] public string Description { get; set; } = "";
     [JsonPropertyName("order")] public int Order { get; set; }
     [JsonPropertyName("script")] public string Script { get; set; } = "";
     /// <summary>toggle | dropdown | button | actions</summary>

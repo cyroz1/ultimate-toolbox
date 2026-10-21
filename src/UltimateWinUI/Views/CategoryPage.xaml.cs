@@ -136,6 +136,15 @@ public sealed partial class CategoryPage : Page
             FontSize = 14,
             FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
         });
+        if (!string.IsNullOrWhiteSpace(tweak.Description))
+        {
+            textStack.Children.Add(new TextBlock
+            {
+                Text = tweak.Description,
+                Style = (Style)Application.Current.Resources["CaptionStyle"],
+                FontSize = 12.5,
+            });
+        }
         var status = tweak.StatusText;
         if (_searchQuery != null && tweak.Parent != null)
             status = tweak.Parent.Name + " · " + status;

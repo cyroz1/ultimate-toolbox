@@ -26,6 +26,9 @@ import shutil
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).parent))
+from descriptions import DESCRIPTIONS
+
 CATEGORY_META = {
     "1 Check":     ("Check",     "Diagnostics and benchmarks for BIOS, storage, RAM, GPU and CPU."),
     "2 Refresh":   ("Refresh",   "Reset, reinstall and Windows refresh helpers."),
@@ -279,6 +282,7 @@ def main() -> int:
             tweak = {
                 "id": f"{cat_name.lower()}-{order}-{re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')}",
                 "name": name,
+                "description": DESCRIPTIONS.get(f"{folder.name}/{ps1.name}", ""),
                 "order": order,
                 "script": f"{folder.name}/{ps1.name}",
                 "control": control,
@@ -305,6 +309,10 @@ def main() -> int:
         "license": "MIT (c) FR33THY",
         "categories": categories,
     }
+    missing = [f"{c['folder']}/{t['script'].split('/')[-1]}"
+               for c in categories for t in c["tweaks"] if not t["description"]]
+    if missing:
+        print(f"WARNING: {len(missing)} tweaks have no description: {missing[:5]}")
     json_out.parent.mkdir(parents=True, exist_ok=True)
     json_out.write_text(json.dumps(doc, indent=1, ensure_ascii=False), encoding="utf-8")
     print(f"tweaks: {total}  controls: {stats}")

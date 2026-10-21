@@ -11,6 +11,7 @@
     {
      "id": "check-1-bios-check",
      "name": "Bios Check",
+     "description": "Reports BIOS version and setup state so you can compare against the guide's recommended BIOS settings.",
      "order": 1,
      "script": "1 Check/1 Bios Check.ps1",
      "control": "button",
@@ -34,6 +35,7 @@
     {
      "id": "check-2-storage-check",
      "name": "Storage Check",
+     "description": "Shows all drives with their space and health info, then opens Explorer.",
      "order": 2,
      "script": "1 Check/2 Storage Check.ps1",
      "control": "button",
@@ -49,6 +51,7 @@
     {
      "id": "check-3-ram-check",
      "name": "Ram Check",
+     "description": "Shows installed memory: capacity, speed, slots and configuration.",
      "order": 3,
      "script": "1 Check/3 Ram Check.ps1",
      "control": "button",
@@ -64,6 +67,7 @@
     {
      "id": "check-4-gpu-check",
      "name": "Gpu Check",
+     "description": "Shows GPU model, driver version and display details.",
      "order": 4,
      "script": "1 Check/4 Gpu Check.ps1",
      "control": "button",
@@ -79,6 +83,7 @@
     {
      "id": "check-5-storage-ram-cpu-test-bench",
      "name": "Storage Ram Cpu Test & Bench",
+     "description": "Runs quick storage, RAM and CPU benchmarks and reports the scores.",
      "order": 5,
      "script": "1 Check/5 Storage Ram Cpu Test & Bench.ps1",
      "control": "button",
@@ -94,6 +99,7 @@
     {
      "id": "check-6-gpu-test-bench",
      "name": "Gpu Test & Bench",
+     "description": "Runs a GPU benchmark and reports the score.",
      "order": 6,
      "script": "1 Check/6 Gpu Test & Bench.ps1",
      "control": "button",
@@ -116,6 +122,7 @@
     {
      "id": "refresh-1-factory-reset",
      "name": "Factory Reset",
+     "description": "Opens Recovery settings, where the Windows factory reset lives.",
      "order": 1,
      "script": "2 Refresh/1 Factory Reset.ps1",
      "control": "actions",
@@ -131,6 +138,7 @@
     {
      "id": "refresh-2-account-local",
      "name": "Account Local",
+     "description": "Opens User Accounts (netplwiz) to set up and manage a local account.",
      "order": 2,
      "script": "2 Refresh/2 Account Local.ps1",
      "control": "actions",
@@ -146,6 +154,7 @@
     {
      "id": "refresh-3-reinstall",
      "name": "Reinstall",
+     "description": "Downloads the Windows 10 or 11 Media Creation Tool and starts a reinstall.",
      "order": 3,
      "script": "2 Refresh/3 Reinstall.ps1",
      "control": "toggle",
@@ -167,6 +176,7 @@
     {
      "id": "refresh-4-autounattend",
      "name": "Autounattend",
+     "description": "Builds an autounattend.xml for unattended Windows installs. Asks for the account name and USB drive letter.",
      "order": 4,
      "script": "2 Refresh/4 Autounattend.ps1",
      "control": "button",
@@ -218,6 +228,7 @@
     {
      "id": "refresh-5-updates-drivers-block",
      "name": "Updates Drivers Block",
+     "description": "Blocks driver updates or all Windows updates, on this PC or via a bootable USB, and unblocks them again.",
      "order": 5,
      "script": "2 Refresh/5 Updates Drivers Block.ps1",
      "control": "dropdown",
@@ -545,6 +556,7 @@
     {
      "id": "refresh-6-network-driver",
      "name": "Network Driver",
+     "description": "Finds your motherboard model and opens the vendor site to download the network driver.",
      "order": 6,
      "script": "2 Refresh/6 Network Driver.ps1",
      "control": "button",
@@ -560,6 +572,7 @@
     {
      "id": "refresh-7-to-bios",
      "name": "To Bios",
+     "description": "Restarts the PC straight into BIOS/UEFI setup.",
      "order": 7,
      "script": "2 Refresh/7 To Bios.ps1",
      "control": "button",
@@ -582,6 +595,7 @@
     {
      "id": "setup-1-bitlocker",
      "name": "BitLocker",
+     "description": "Turns BitLocker drive encryption off (recommended) or back on.",
      "order": 1,
      "script": "3 Setup/1 BitLocker.ps1",
      "control": "toggle",
@@ -604,6 +618,7 @@
     {
      "id": "setup-10-edge-settings",
      "name": "Edge Settings",
+     "description": "Applies FR33THY's Edge policy set, including installing uBlock Origin, or restores Edge defaults.",
      "order": 10,
      "script": "3 Setup/10 Edge Settings.ps1",
      "control": "toggle",
@@ -652,6 +667,7 @@
     {
      "id": "setup-11-store-settings",
      "name": "Store Settings",
+     "description": "Tightens Microsoft Store settings, including personalized experiences off, or restores defaults.",
      "order": 11,
      "script": "3 Setup/11 Store Settings.ps1",
      "control": "toggle",
@@ -682,6 +698,7 @@
     {
      "id": "setup-12-updates-pause",
      "name": "Updates Pause",
+     "description": "Pauses Windows Updates and opens the update settings page.",
      "order": 12,
      "script": "3 Setup/12 Updates Pause.ps1",
      "control": "button",
@@ -697,6 +714,7 @@
     {
      "id": "setup-2-memory-compression",
      "name": "Memory Compression",
+     "description": "Disables or enables Windows memory compression (MMAgent). FR33THY recommends off.",
      "order": 2,
      "script": "3 Setup/2 Memory Compression.ps1",
      "control": "toggle",
@@ -725,6 +743,7 @@
     {
      "id": "setup-3-convert-home-to-pro",
      "name": "Convert Home To Pro",
+     "description": "Copies the generic Pro key to the clipboard and opens Activation to upgrade Home to Pro.",
      "order": 3,
      "script": "3 Setup/3 Convert Home To Pro.ps1",
      "control": "button",
@@ -740,6 +759,7 @@
     {
      "id": "setup-4-keys",
      "name": "Keys",
+     "description": "Opens the Microsoft Activation Scripts (MAS) project for Windows activation keys and tools.",
      "order": 4,
      "script": "3 Setup/4 Keys.ps1",
      "control": "actions",
@@ -755,6 +775,7 @@
     {
      "id": "setup-5-activation",
      "name": "Activation",
+     "description": "Opens the Windows Activation settings page.",
      "order": 5,
      "script": "3 Setup/5 Activation.ps1",
      "control": "actions",
@@ -770,6 +791,7 @@
     {
      "id": "setup-6-date-language-region-time",
      "name": "Date Language Region Time",
+     "description": "Opens Date & time settings, the starting point for the date, language, region and time setup flow.",
      "order": 6,
      "script": "3 Setup/6 Date Language Region Time.ps1",
      "control": "actions",
@@ -785,6 +807,7 @@
     {
      "id": "setup-7-startup-apps",
      "name": "Startup Apps",
+     "description": "Opens Settings > Startup apps to toggle what launches at sign-in.",
      "order": 7,
      "script": "3 Setup/7 Startup Apps.ps1",
      "control": "actions",
@@ -800,6 +823,7 @@
     {
      "id": "setup-8-startup-apps",
      "name": "Startup Apps",
+     "description": "Opens Task Manager's startup view to manage what launches at sign-in.",
      "order": 8,
      "script": "3 Setup/8 Startup Apps.ps1",
      "control": "actions",
@@ -815,6 +839,7 @@
     {
      "id": "setup-9-background-apps",
      "name": "Background Apps",
+     "description": "Stops apps from running in the background via registry policy, or restores the default.",
      "order": 9,
      "script": "3 Setup/9 Background Apps.ps1",
      "control": "toggle",
@@ -881,6 +906,7 @@
     {
      "id": "installers-1-installers",
      "name": "Installers",
+     "description": "Downloads and silently installs the app you pick: 7-Zip, Chrome, Brave, game launchers and more.",
      "order": 1,
      "script": "4 Installers/1 Installers.ps1",
      "control": "dropdown",
@@ -1222,6 +1248,7 @@
     {
      "id": "installers-2-msi-afterburner",
      "name": "MSI Afterburner",
+     "description": "Downloads and installs MSI Afterburner with FR33THY's setup.",
      "order": 2,
      "script": "4 Installers/2 MSI Afterburner.ps1",
      "control": "button",
@@ -1244,6 +1271,7 @@
     {
      "id": "graphics-1-driver-clean",
      "name": "Driver Clean",
+     "description": "Runs DDU to fully remove GPU drivers, in auto or manual mode.",
      "order": 1,
      "script": "5 Graphics/1 Driver Clean.ps1",
      "control": "toggle",
@@ -1317,6 +1345,7 @@
     {
      "id": "graphics-10-msi-mode",
      "name": "Msi Mode",
+     "description": "Enables MSI (message signaled interrupt) mode for all GPUs, or turns it off.",
      "order": 10,
      "script": "5 Graphics/10 Msi Mode.ps1",
      "control": "toggle",
@@ -1355,6 +1384,7 @@
     {
      "id": "graphics-11-directx",
      "name": "DirectX",
+     "description": "Downloads and installs the DirectX end-user runtimes.",
      "order": 11,
      "script": "5 Graphics/11 DirectX.ps1",
      "control": "button",
@@ -1384,6 +1414,7 @@
     {
      "id": "graphics-12-c",
      "name": "C++",
+     "description": "Downloads and installs the Microsoft Visual C++ redistributables.",
      "order": 12,
      "script": "5 Graphics/12 C++.ps1",
      "control": "button",
@@ -1399,6 +1430,7 @@
     {
      "id": "graphics-13-resolution-refresh-rate",
      "name": "Resolution Refresh Rate",
+     "description": "Opens Display settings to set resolution and refresh rate.",
      "order": 13,
      "script": "5 Graphics/13 Resolution Refresh Rate.ps1",
      "control": "actions",
@@ -1414,6 +1446,7 @@
     {
      "id": "graphics-14-hags-windowed",
      "name": "Hags Windowed",
+     "description": "Opens Advanced graphics settings, where hardware-accelerated GPU scheduling and windowed game optimizations live.",
      "order": 14,
      "script": "5 Graphics/14 Hags Windowed.ps1",
      "control": "actions",
@@ -1429,6 +1462,7 @@
     {
      "id": "graphics-2-driver-updated-install",
      "name": "Driver Updated Install",
+     "description": "Finds, downloads and installs the latest GPU driver for NVIDIA, AMD or Intel.",
      "order": 2,
      "script": "5 Graphics/2 Driver Updated Install.ps1",
      "control": "toggle",
@@ -1456,6 +1490,7 @@
     {
      "id": "graphics-3-driver-updated-install-settings",
      "name": "Driver Updated Install & Settings",
+     "description": "Installs the latest GPU driver, then applies FR33THY's vendor settings.",
      "order": 3,
      "script": "5 Graphics/3 Driver Updated Install & Settings.ps1",
      "control": "dropdown",
@@ -1609,6 +1644,7 @@
     {
      "id": "graphics-4-driver-debloat-install-settings",
      "name": "Driver Debloat Install & Settings",
+     "description": "Installs a debloated GPU driver (no telemetry or extras), then applies FR33THY's vendor settings.",
      "order": 4,
      "script": "5 Graphics/4 Driver Debloat Install & Settings.ps1",
      "control": "dropdown",
@@ -1769,6 +1805,7 @@
     {
      "id": "graphics-5-nvidia-settings",
      "name": "Nvidia Settings",
+     "description": "Imports FR33THY's NVIDIA profile settings, PhysX on GPU included, or restores defaults.",
      "order": 5,
      "script": "5 Graphics/5 Nvidia Settings.ps1",
      "control": "toggle",
@@ -1877,6 +1914,7 @@
     {
      "id": "graphics-6-amd-settings",
      "name": "Amd Settings",
+     "description": "Imports FR33THY's AMD Software Adrenalin settings profile, or restores defaults.",
      "order": 6,
      "script": "5 Graphics/6 Amd Settings.ps1",
      "control": "toggle",
@@ -2013,6 +2051,7 @@
     {
      "id": "graphics-7-intel-settings",
      "name": "Intel Settings",
+     "description": "Applies FR33THY's Intel graphics 3D settings, VSync off included, or restores defaults.",
      "order": 7,
      "script": "5 Graphics/7 Intel Settings.ps1",
      "control": "toggle",
@@ -2043,6 +2082,7 @@
     {
      "id": "graphics-8-hdcp",
      "name": "Hdcp",
+     "description": "Disables HDCP in the GPU driver (recommended), or restores the default.",
      "order": 8,
      "script": "5 Graphics/8 Hdcp.ps1",
      "control": "toggle",
@@ -2065,6 +2105,7 @@
     {
      "id": "graphics-9-p0-state",
      "name": "P0 State",
+     "description": "Forces the GPU to stay in its highest performance power state (P0), or restores the default.",
      "order": 9,
      "script": "5 Graphics/9 P0 State.ps1",
      "control": "toggle",
@@ -2094,6 +2135,7 @@
     {
      "id": "windows-1-start-menu-taskbar",
      "name": "Start Menu Taskbar",
+     "description": "Applies FR33THY's clean Start menu and taskbar layout, or restores the default.",
      "order": 1,
      "script": "6 Windows/1 Start Menu Taskbar.ps1",
      "control": "toggle",
@@ -2144,6 +2186,7 @@
     {
      "id": "windows-10-gamemode",
      "name": "Gamemode",
+     "description": "Opens the Windows Game Mode settings page.",
      "order": 10,
      "script": "6 Windows/10 Gamemode.ps1",
      "control": "actions",
@@ -2159,6 +2202,7 @@
     {
      "id": "windows-11-pointer-precision",
      "name": "Pointer Precision",
+     "description": "Opens Mouse Properties, where Enhance pointer precision lives.",
      "order": 11,
      "script": "6 Windows/11 Pointer Precision.ps1",
      "control": "actions",
@@ -2174,6 +2218,7 @@
     {
      "id": "windows-12-scaling",
      "name": "Scaling",
+     "description": "Opens Advanced display scaling settings.",
      "order": 12,
      "script": "6 Windows/12 Scaling.ps1",
      "control": "actions",
@@ -2189,6 +2234,7 @@
     {
      "id": "windows-13-bloatware",
      "name": "Bloatware",
+     "description": "Removes preinstalled bloatware, or reinstalls the Store, UWP apps and legacy features.",
      "order": 13,
      "script": "6 Windows/13 Bloatware.ps1",
      "control": "dropdown",
@@ -2255,6 +2301,7 @@
     {
      "id": "windows-14-bloatware-legacy-apps-check",
      "name": "Bloatware Legacy Apps Check",
+     "description": "Opens Programs and Features and lists installed legacy apps in the log.",
      "order": 14,
      "script": "6 Windows/14 Bloatware Legacy Apps Check.ps1",
      "control": "button",
@@ -2270,6 +2317,7 @@
     {
      "id": "windows-15-bloatware-legacy-features-check",
      "name": "Bloatware Legacy Features Check",
+     "description": "Opens the Windows features list and reports which legacy features are installed.",
      "order": 15,
      "script": "6 Windows/15 Bloatware Legacy Features Check.ps1",
      "control": "button",
@@ -2285,6 +2333,7 @@
     {
      "id": "windows-16-bloatware-uwp-apps-check",
      "name": "Bloatware UWP Apps Check",
+     "description": "Opens Installed apps and lists every UWP/AppX package in the log.",
      "order": 16,
      "script": "6 Windows/16 Bloatware UWP Apps Check.ps1",
      "control": "actions",
@@ -2300,6 +2349,7 @@
     {
      "id": "windows-17-bloatware-uwp-features-check",
      "name": "Bloatware UWP Features Check",
+     "description": "Reports which UWP features and capabilities are installed.",
      "order": 17,
      "script": "6 Windows/17 Bloatware UWP Features Check.ps1",
      "control": "button",
@@ -2315,6 +2365,7 @@
     {
      "id": "windows-18-bloatware-taskmgr-check",
      "name": "Bloatware TaskMgr Check",
+     "description": "Opens Task Manager to check running apps against the bloatware list.",
      "order": 18,
      "script": "6 Windows/18 Bloatware TaskMgr Check.ps1",
      "control": "actions",
@@ -2330,6 +2381,7 @@
     {
      "id": "windows-19-gamebar",
      "name": "Gamebar",
+     "description": "Removes Game Bar and the Xbox apps, or restores them.",
      "order": 19,
      "script": "6 Windows/19 Gamebar.ps1",
      "control": "toggle",
@@ -2368,6 +2420,7 @@
     {
      "id": "windows-2-start-menu-layout",
      "name": "Start Menu Layout",
+     "description": "Switches the Start menu between the 25H2 layout (recommended) and the 24H2 layout.",
      "order": 2,
      "script": "6 Windows/2 Start Menu Layout.ps1",
      "control": "toggle",
@@ -2390,6 +2443,7 @@
     {
      "id": "windows-20-edge-webview",
      "name": "Edge & WebView",
+     "description": "Uninstalls Microsoft Edge and WebView2, or restores them.",
      "order": 20,
      "script": "6 Windows/20 Edge & WebView.ps1",
      "control": "toggle",
@@ -2438,6 +2492,7 @@
     {
      "id": "windows-21-notepad-settings",
      "name": "Notepad Settings",
+     "description": "Applies FR33THY's Notepad settings, or restores defaults.",
      "order": 21,
      "script": "6 Windows/21 Notepad Settings.ps1",
      "control": "toggle",
@@ -2460,6 +2515,7 @@
     {
      "id": "windows-22-control-panel-settings",
      "name": "Control Panel Settings",
+     "description": "Applies FR33THY's Control Panel and app-permission privacy fixes, or restores defaults.",
      "order": 22,
      "script": "6 Windows/22 Control Panel Settings.ps1",
      "control": "toggle",
@@ -2498,6 +2554,7 @@
     {
      "id": "windows-23-sound",
      "name": "Sound",
+     "description": "Opens the classic Sound control panel (mmsys.cpl).",
      "order": 23,
      "script": "6 Windows/23 Sound.ps1",
      "control": "actions",
@@ -2513,6 +2570,7 @@
     {
      "id": "windows-24-loudness-eq",
      "name": "Loudness EQ",
+     "description": "Unhides the Enhancements tab, including loudness equalization, for all sound devices.",
      "order": 24,
      "script": "6 Windows/24 Loudness EQ.ps1",
      "control": "button",
@@ -2528,6 +2586,7 @@
     {
      "id": "windows-25-device-manager-power-savings-wake",
      "name": "Device Manager Power Savings & Wake",
+     "description": "Disables power saving and wake on all connected devices (ACPI, HID and more), or restores defaults.",
      "order": 25,
      "script": "6 Windows/25 Device Manager Power Savings & Wake.ps1",
      "control": "toggle",
@@ -2582,6 +2641,7 @@
     {
      "id": "windows-26-network-adapter-power-savings-wake",
      "name": "Network Adapter Power Savings & Wake",
+     "description": "Disables power saving and wake features on all network adapters, or restores defaults.",
      "order": 26,
      "script": "6 Windows/26 Network Adapter Power Savings & Wake.ps1",
      "control": "toggle",
@@ -2636,6 +2696,7 @@
     {
      "id": "windows-27-network-ipv4-only",
      "name": "Network IPv4 Only",
+     "description": "Disables every network protocol except IPv4 on your adapters, or restores the default.",
      "order": 27,
      "script": "6 Windows/27 Network IPv4 Only.ps1",
      "control": "toggle",
@@ -2658,6 +2719,7 @@
     {
      "id": "windows-28-write-cache-buffer-flushing",
      "name": "Write Cache Buffer Flushing",
+     "description": "Turns off Windows write-cache buffer flushing on connected SCSI/NVMe drives, or restores the default.",
      "order": 28,
      "script": "6 Windows/28 Write Cache Buffer Flushing.ps1",
      "control": "toggle",
@@ -2680,6 +2742,7 @@
     {
      "id": "windows-29-power-plan",
      "name": "Power Plan",
+     "description": "Imports FR33THY's Ultimate power plan: deletes other plans, disables hibernate, sleep, fast boot and power throttling, unparks CPU cores. Default restores the stock plans.",
      "order": 29,
      "script": "6 Windows/29 Power Plan.ps1",
      "control": "toggle",
@@ -2809,6 +2872,7 @@
     {
      "id": "windows-3-start-menu-shortcuts",
      "name": "Start Menu Shortcuts",
+     "description": "Creates Start menu and Startup shortcuts, including a Recycle Bin shortcut.",
      "order": 3,
      "script": "6 Windows/3 Start Menu Shortcuts.ps1",
      "control": "button",
@@ -2824,6 +2888,7 @@
     {
      "id": "windows-30-timer-resolution",
      "name": "Timer Resolution",
+     "description": "Installs a service that forces the Windows timer resolution to its minimum, or removes it.",
      "order": 30,
      "script": "6 Windows/30 Timer Resolution.ps1",
      "control": "toggle",
@@ -2861,6 +2926,7 @@
     {
      "id": "windows-31-uac",
      "name": "UAC",
+     "description": "Turns User Account Control off (EnableLUA 0), or back to the default.",
      "order": 31,
      "script": "6 Windows/31 UAC.ps1",
      "control": "toggle",
@@ -2899,6 +2965,7 @@
     {
      "id": "windows-32-core-isolation",
      "name": "Core Isolation",
+     "description": "Opens System Information and the Core isolation page to check memory integrity state.",
      "order": 32,
      "script": "6 Windows/32 Core Isolation.ps1",
      "control": "button",
@@ -2914,6 +2981,7 @@
     {
      "id": "windows-33-defender-optimize",
      "name": "Defender Optimize",
+     "description": "Applies FR33THY's Defender optimization set as TrustedInstaller, or restores defaults.",
      "order": 33,
      "script": "6 Windows/33 Defender Optimize.ps1",
      "control": "toggle",
@@ -3108,6 +3176,7 @@
     {
      "id": "windows-34-autoruns-startup-tasks-apps-check",
      "name": "Autoruns Startup Tasks & Apps Check",
+     "description": "Audits startup: lists autoruns, scheduled tasks and startup apps in the log.",
      "order": 34,
      "script": "6 Windows/34 Autoruns Startup Tasks & Apps Check.ps1",
      "control": "button",
@@ -3138,6 +3207,7 @@
     {
      "id": "windows-35-cleanup",
      "name": "Cleanup",
+     "description": "Cleans temp folders and other junk to free up space.",
      "order": 35,
      "script": "6 Windows/35 Cleanup.ps1",
      "control": "button",
@@ -3153,6 +3223,7 @@
     {
      "id": "windows-36-restore-point",
      "name": "Restore Point",
+     "description": "Enables restore points and allows creating them more frequently.",
      "order": 36,
      "script": "6 Windows/36 Restore Point.ps1",
      "control": "button",
@@ -3176,6 +3247,7 @@
     {
      "id": "windows-4-context-menu",
      "name": "Context Menu",
+     "description": "Restores the classic right-click context menu and removes clutter entries, or reverts.",
      "order": 4,
      "script": "6 Windows/4 Context Menu.ps1",
      "control": "toggle",
@@ -3224,6 +3296,7 @@
     {
      "id": "windows-5-theme-black",
      "name": "Theme Black",
+     "description": "Applies a full black theme across Windows, or restores the default theme.",
      "order": 5,
      "script": "6 Windows/5 Theme Black.ps1",
      "control": "toggle",
@@ -3246,6 +3319,7 @@
     {
      "id": "windows-6-signout-lockscreen-wallpaper-black",
      "name": "Signout Lockscreen Wallpaper Black",
+     "description": "Sets a plain black wallpaper on the sign-out and lock screens.",
      "order": 6,
      "script": "6 Windows/6 Signout Lockscreen Wallpaper Black.ps1",
      "control": "toggle",
@@ -3309,6 +3383,7 @@
     {
      "id": "windows-7-user-account-pictures-black",
      "name": "User Account Pictures Black",
+     "description": "Backs up all user account pictures and replaces them with black images.",
      "order": 7,
      "script": "6 Windows/7 User Account Pictures Black.ps1",
      "control": "toggle",
@@ -3330,6 +3405,7 @@
     {
      "id": "windows-8-widgets",
      "name": "Widgets",
+     "description": "Disables the Widgets board and removes it from the taskbar, or restores it.",
      "order": 8,
      "script": "6 Windows/8 Widgets.ps1",
      "control": "toggle",
@@ -3374,6 +3450,7 @@
     {
      "id": "windows-9-copilot",
      "name": "Copilot",
+     "description": "Uninstalls and disables Copilot, or restores the default.",
      "order": 9,
      "script": "6 Windows/9 Copilot.ps1",
      "control": "toggle",
@@ -3417,6 +3494,7 @@
     {
      "id": "hardware-1-scaling-higher-no-accel",
      "name": "Scaling Higher No Accel",
+     "description": "Sets pointer speed to 6/11 and disables pointer acceleration, matched to the display scaling you pick.",
      "order": 1,
      "script": "7 Hardware/1 Scaling Higher No Accel.ps1",
      "control": "dropdown",
@@ -3984,6 +4062,7 @@
     {
      "id": "hardware-2-background-polling-rate-cap",
      "name": "Background Polling Rate Cap",
+     "description": "Removes the 125Hz polling rate cap for background apps, or restores the default cap.",
      "order": 2,
      "script": "7 Hardware/2 Background Polling Rate Cap.ps1",
      "control": "toggle",
@@ -4021,6 +4100,7 @@
     {
      "id": "hardware-3-mouse-polling-rate-test",
      "name": "Mouse Polling Rate Test",
+     "description": "Opens a polling rate test to measure your mouse's actual Hz.",
      "order": 3,
      "script": "7 Hardware/3 Mouse Polling Rate Test.ps1",
      "control": "button",
@@ -4036,6 +4116,7 @@
     {
      "id": "hardware-4-controller-overclock",
      "name": "Controller Overclock",
+     "description": "Overclocks your controller's USB polling rate for lower input latency.",
      "order": 4,
      "script": "7 Hardware/4 Controller Overclock.ps1",
      "control": "button",
@@ -4051,6 +4132,7 @@
     {
      "id": "hardware-5-controller-polling-rate-test",
      "name": "Controller Polling Rate Test",
+     "description": "Opens a test to measure your controller's polling rate.",
      "order": 5,
      "script": "7 Hardware/5 Controller Polling Rate Test.ps1",
      "control": "button",
@@ -4066,6 +4148,7 @@
     {
      "id": "hardware-6-monitor-optimization",
      "name": "Monitor Optimization",
+     "description": "Opens TestUFO to dial in your monitor's refresh rate, overdrive and sync settings.",
      "order": 6,
      "script": "7 Hardware/6 Monitor Optimization.ps1",
      "control": "button",
@@ -4081,6 +4164,7 @@
     {
      "id": "hardware-7-network-bufferbloat-test",
      "name": "Network Bufferbloat Test",
+     "description": "Opens the Waveform bufferbloat test to measure latency under load.",
      "order": 7,
      "script": "7 Hardware/7 Network Bufferbloat Test.ps1",
      "control": "actions",
@@ -4096,6 +4180,7 @@
     {
      "id": "hardware-8-pc-build-guide",
      "name": "PC Build Guide",
+     "description": "Opens FR33THY's saved PCPartPicker build guide.",
      "order": 8,
      "script": "7 Hardware/8 PC Build Guide.ps1",
      "control": "actions",
@@ -4118,6 +4203,7 @@
     {
      "id": "advanced-1-defender",
      "name": "Defender",
+     "description": "Fully disables Windows Defender as TrustedInstaller, or re-enables it.",
      "order": 1,
      "script": "8 Advanced/1 Defender.ps1",
      "control": "toggle",
@@ -4317,6 +4403,7 @@
     {
      "id": "advanced-10-priority",
      "name": "Priority",
+     "description": "Sets a game exe's process priority, either already running or at startup. Asks for the priority and exe.",
      "order": 10,
      "script": "8 Advanced/10 Priority.ps1",
      "control": "toggle",
@@ -4346,6 +4433,7 @@
     {
      "id": "advanced-11-mpo",
      "name": "Mpo",
+     "description": "Enables or disables Multiplane Overlay (MPO). Off is a common fix for flicker and stutter.",
      "order": 11,
      "script": "8 Advanced/11 Mpo.ps1",
      "control": "toggle",
@@ -4397,6 +4485,7 @@
     {
      "id": "advanced-12-hardware-legacy-flip",
      "name": "Hardware Legacy Flip",
+     "description": "Switches fullscreen presentation between FSO with hardware independent flip and FSE with hardware legacy flip.",
      "order": 12,
      "script": "8 Advanced/12 Hardware Legacy Flip.ps1",
      "control": "toggle",
@@ -4472,6 +4561,7 @@
     {
      "id": "advanced-13-hardware-composed-independent-flip",
      "name": "Hardware Composed Independent Flip",
+     "description": "Switches the flip mode to hardware composed independent flip, or back to the independent flip default.",
      "order": 13,
      "script": "8 Advanced/13 Hardware Composed Independent Flip.ps1",
      "control": "toggle",
@@ -4502,6 +4592,7 @@
     {
      "id": "advanced-14-ulps",
      "name": "Ulps",
+     "description": "Turns AMD Ultra Low Power State (ULPS) on or off. Off can fix stutter and wake issues on AMD GPUs.",
      "order": 14,
      "script": "8 Advanced/14 Ulps.ps1",
      "control": "toggle",
@@ -4524,6 +4615,7 @@
     {
      "id": "advanced-15-driver-whql-secure-boot-bypass",
      "name": "Driver Whql Secure Boot Bypass",
+     "description": "Enables the driver WHQL / Secure Boot bypass for unsigned drivers, or turns it back off.",
      "order": 15,
      "script": "8 Advanced/15 Driver Whql Secure Boot Bypass.ps1",
      "control": "toggle",
@@ -4561,6 +4653,7 @@
     {
      "id": "advanced-16-keyboard-shortcuts",
      "name": "Keyboard Shortcuts",
+     "description": "Enables or disables Windows keyboard shortcuts and media keys (HID service and hotkeys).",
      "order": 16,
      "script": "8 Advanced/16 Keyboard Shortcuts.ps1",
      "control": "toggle",
@@ -4634,6 +4727,7 @@
     {
      "id": "advanced-17-services",
      "name": "Services",
+     "description": "Disables FR33THY's list of unneeded Windows services as TrustedInstaller, or restores defaults.",
      "order": 17,
      "script": "8 Advanced/17 Services.ps1",
      "control": "toggle",
@@ -4672,6 +4766,7 @@
     {
      "id": "advanced-18-start-search-shell-mobsync",
      "name": "Start Search Shell Mobsync",
+     "description": "Disables Start, Search shell and MobSync components by moving their folders, or restores them.",
      "order": 18,
      "script": "8 Advanced/18 Start Search Shell Mobsync.ps1",
      "control": "toggle",
@@ -4741,6 +4836,7 @@
     {
      "id": "advanced-19-nvme-faster-driver",
      "name": "NVME Faster Driver",
+     "description": "Enables Windows' newer, faster NVMe driver with the safe-boot fix, or restores the default driver.",
      "order": 19,
      "script": "8 Advanced/19 NVME Faster Driver.ps1",
      "control": "toggle",
@@ -4790,6 +4886,7 @@
     {
      "id": "advanced-2-firewall",
      "name": "Firewall",
+     "description": "Disables the Windows Firewall, or re-enables it.",
      "order": 2,
      "script": "8 Advanced/2 Firewall.ps1",
      "control": "toggle",
@@ -4840,6 +4937,7 @@
     {
      "id": "advanced-3-spectre-meltdown",
      "name": "Spectre Meltdown",
+     "description": "Disables Spectre and Meltdown CPU mitigations for a small perf gain, or re-enables them.",
      "order": 3,
      "script": "8 Advanced/3 Spectre Meltdown.ps1",
      "control": "toggle",
@@ -4888,6 +4986,7 @@
     {
      "id": "advanced-4-data-execution-prevention",
      "name": "Data Execution Prevention",
+     "description": "Disables Data Execution Prevention (DEP), or re-enables it.",
      "order": 4,
      "script": "8 Advanced/4 Data Execution Prevention.ps1",
      "control": "toggle",
@@ -4910,6 +5009,7 @@
     {
      "id": "advanced-5-file-download-security-warning",
      "name": "File Download Security Warning",
+     "description": "Disables the security warning shown when running downloaded files, or re-enables it.",
      "order": 5,
      "script": "8 Advanced/5 File Download Security Warning.ps1",
      "control": "toggle",
@@ -4967,6 +5067,7 @@
     {
      "id": "advanced-6-mmagent-features",
      "name": "MMAgent Features",
+     "description": "Disables MMAgent features like application launch prefetching, or restores defaults.",
      "order": 6,
      "script": "8 Advanced/6 MMAgent Features.ps1",
      "control": "toggle",
@@ -5011,6 +5112,7 @@
     {
      "id": "advanced-7-rebar-force",
      "name": "ReBar Force",
+     "description": "Forces Resizable BAR on or off per driver profile, or keeps the per-game whitelist default.",
      "order": 7,
      "script": "8 Advanced/7 ReBar Force.ps1",
      "control": "dropdown",
@@ -5045,6 +5147,7 @@
     {
      "id": "advanced-8-smt-ht",
      "name": "Smt Ht",
+     "description": "Disables SMT/Hyperthreading for a game exe, either already running or at startup. Asks for the exe.",
      "order": 8,
      "script": "8 Advanced/8 Smt Ht.ps1",
      "control": "toggle",
@@ -5070,6 +5173,7 @@
     {
      "id": "advanced-9-core-1-thread-1",
      "name": "Core 1 Thread 1",
+     "description": "Restricts a game exe to a single core and thread, either already running or at startup. Asks for the exe.",
      "order": 9,
      "script": "8 Advanced/9 Core 1 Thread 1.ps1",
      "control": "toggle",
