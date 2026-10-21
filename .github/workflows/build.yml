@@ -97,6 +97,11 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Check out source history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Download installers
         uses: actions/download-artifact@v4
         with:
@@ -120,9 +125,40 @@ jobs:
             exit 1
           fi
 
-          gh release create "$GITHUB_REF_NAME" \
-            "artifacts/$expected_x64" \
-            "artifacts/$expected_arm64" \
-            --repo "$GITHUB_REPOSITORY" \
-            --title "UltimateWinUI $GITHUB_REF_NAME" \
-            --generate-notes
+          if previous_tag=$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" --match 'v[0-9]*' 2>/dev/null); then
+            commit_range="${previous_tag}..${GITHUB_REF_NAME}"
+            compare_url="https://github.com/${GITHUB_REPOSITORY}/compare/${previous_tag}...${GITHUB_REF_NAME}"
+          else
+            commit_range="$GITHUB_REF_NAME"
+            compare_url="https://github.com/${GITHUB_REPOSITORY}/commits/${GITHUB_REF_NAME}"
+          fi
+
+          changes=$(git log --no-merges --format='- %s (%h)' "$commit_range")
+          if [[ -z "$changes" ]]; then
+            changes='- No non-merge commits in this release range.'
+          fi
+
+          {
+            printf '# UltimateWinUI %s\n\n' "$GITHUB_REF_NAME"
+            printf '## Changes\n\n%s\n\n' "$changes"
+            printf '**Full Changelog:** %s\n' "$compare_url"
+          } > release-notes.md
+
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "UltimateWinUI $GITHUB_REF_NAME" \
+              --notes-file release-notes.md
+            gh release upload "$GITHUB_REF_NAME" \
+              "artifacts/$expected_x64" \
+              "artifacts/$expected_arm64" \
+              --repo "$GITHUB_REPOSITORY" \
+              --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              "artifacts/$expected_x64" \
+              "artifacts/$expected_arm64" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "UltimateWinUI $GITHUB_REF_NAME" \
+              --notes-file release-notes.md
+          fi

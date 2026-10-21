@@ -71,8 +71,9 @@ Installer (Inno Setup 6), for x64:
 
 `.github/workflows/build.yml` runs when a `v*` tag is pushed. It builds only
 the self-contained x64 and ARM64 Inno Setup installers, then creates and
-publishes a GitHub release with generated release notes and both installers
-attached. The first release uses the `v1.0.0` tag.
+publishes a GitHub release with a commit-based changelog and both installers
+attached. The workflow can also be dispatched manually for a tag. The first
+release uses the `v1.0.0` tag.
 
 ## Layout
 
