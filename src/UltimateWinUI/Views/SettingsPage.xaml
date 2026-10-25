@@ -68,7 +68,7 @@
             <TextBlock Text="About" Style="{StaticResource SectionHeaderStyle}" />
             <Border Style="{StaticResource TweakCardStyle}">
                 <StackPanel Spacing="6">
-                    <TextBlock Text="UltimateWinUI 1.0.2" FontSize="14" FontWeight="SemiBold" />
+                    <TextBlock Text="UltimateWinUI 1.0.3" FontSize="14" FontWeight="SemiBold" />
                     <TextBlock Style="{StaticResource CaptionStyle}" FontSize="13"
                                Text="A native WinUI 3 front end for the FR33THY Ultimate Windows optimization script library. All tweak logic comes from the original scripts, MIT licensed, (c) FR33THY. This app only wraps them: it detects current states, runs the chosen option hidden, logs the output, and remembers what was applied." />
                     <StackPanel Orientation="Horizontal" Spacing="8">

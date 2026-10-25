@@ -16,7 +16,7 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <AssemblyName>UltimateWinUI</AssemblyName>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Authors>UltimateWinUI contributors</Authors>
     <Description>Native Windows Settings style front end for the FR33THY Ultimate tweak library.</Description>
   </PropertyGroup>

@@ -38,12 +38,24 @@
 
             <TextBlock Text="Categories" Style="{StaticResource SectionHeaderStyle}" />
             <GridView x:Name="CategoryGrid" SelectionMode="None">
+                <GridView.Resources>
+                    <ResourceDictionary>
+                        <SolidColorBrush x:Key="GridViewItemBackgroundPointerOver" Color="Transparent" />
+                        <SolidColorBrush x:Key="GridViewItemPointerOverBorderBrush" Color="Transparent" />
+                    </ResourceDictionary>
+                </GridView.Resources>
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="models:Category">
                         <Button Click="CategoryButton_Click"
                                 AutomationProperties.Name="{x:Bind Name}"
                                 Background="Transparent" BorderThickness="0" Padding="0"
                                 HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                            <Button.Resources>
+                                <ResourceDictionary>
+                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="Transparent" />
+                                    <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="Transparent" />
+                                </ResourceDictionary>
+                            </Button.Resources>
                             <Border Style="{StaticResource TweakCardStyle}" Width="250" Margin="0,0,8,8">
                                 <StackPanel Spacing="6">
                                     <FontIcon Glyph="{x:Bind IconGlyph}" FontSize="20" HorizontalAlignment="Left" />
