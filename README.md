@@ -28,10 +28,9 @@ Windows optimization script library, styled after the Windows Settings app
   into a visible PowerShell window. Script output is piped into the in-app
   **Logs** page (and a log file). Consoles only exist if you open the log file
   yourself.
-- **Safety nets, on by default:** a restore point before every apply, and a
-  confirmation dialog before running anything from the Advanced category
-  (Defender, firewall, UAC, mitigations and friends). Both can be turned off
-  in Settings.
+- **Safety settings:** a confirmation dialog before running anything from the
+  Advanced category (on by default), plus an optional restore point before
+  each apply (off by default). Both settings can be changed in Settings.
 
 ## How it works
 
@@ -58,13 +57,13 @@ python tools\catalog_gen.py ..\Ultimate src\UltimateWinUI\Assets\Scripts src\Ult
 Requires Windows + the .NET 8 SDK. WinUI 3 cannot be built on Linux/macOS.
 
 ```powershell
-dotnet publish src\UltimateWinUI\UltimateWinUI.csproj -c Release -r win-x64 --self-contained true -p:Version=1.0.1 -o artifacts\publish\win-x64
+dotnet publish src\UltimateWinUI\UltimateWinUI.csproj -c Release -r win-x64 --self-contained true -p:Version=1.0.2 -o artifacts\publish\win-x64
 ```
 
 Installer (Inno Setup 6), for x64:
 
 ```powershell
-& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=1.0.1 /DPublishDir=..\artifacts\publish\win-x64 /DOutName=UltimateWinUI-x64-Setup-1.0.1 /DArchAllowed=x64compatible /DIn64Bit=x64compatible /Oartifacts installer\UltimateWinUI.iss
+& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=1.0.2 /DPublishDir=..\artifacts\publish\win-x64 /DOutName=UltimateWinUI-x64-Setup-1.0.2 /DArchAllowed=x64compatible /DIn64Bit=x64compatible /Oartifacts installer\UltimateWinUI.iss
 ```
 
 ## CI

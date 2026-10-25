@@ -31,18 +31,18 @@ public partial class App : Application
 
         Log.Write($"UltimateWinUI started. {CountTweaks()} tweaks loaded from the FR33THY Ultimate library.");
 
+        Window = new MainWindow();
+        Window.Activate();
+        Window.ApplyTheme(Settings.Theme);
+        Window.NavigateStartupPage();
+
         // Detect current states off the UI thread, then refresh whatever is shown.
         _ = Task.Run(() =>
         {
             Detector.DetectAll(Catalog, Store);
             Log.Write("State detection finished.");
-            Window?.DispatcherQueue.TryEnqueue(() => Window.RefreshCurrentPage());
+            Window.DispatcherQueue.TryEnqueue(() => Window.RefreshCurrentPage());
         });
-
-        Window = new MainWindow();
-        Window.Activate();
-        Window.ApplyTheme(Settings.Theme);
-        Window.NavigateStartupPage();
     }
 
     private static int CountTweaks()
@@ -112,16 +112,18 @@ public partial class App : Application
                 await Runner.CreateRestorePointAsync();
 
             var exit = await Runner.RunOptionAsync(tweak, option, inputs);
-            if (option.Kind == "apply" && exit == 0)
+            if (option.Kind == "apply")
             {
-                Store.Set(tweak.Id, option.Label);
-                Detector.Detect(tweak, Store);
-            }
-            else if (option.Kind == "apply")
-            {
-                // A failed script must not replace the last known applied option.
-                // Re-detect in case it made a partial change that matches a signature.
-                Detector.Detect(tweak, Store);
+                // Keep registry access and the state-file write off the UI thread.
+                await Task.Run(() =>
+                {
+                    if (exit == 0)
+                        Store.Set(tweak.Id, option.Label);
+
+                    // A failed script must not replace the last known applied option.
+                    // Re-detect in case it made a partial change that matches a signature.
+                    Detector.Detect(tweak, Store);
+                });
             }
             Window.ShowInfo(
                 exit == 0 ? $"{tweak.Name}: {option.Label}" : $"{tweak.Name} finished with exit code {exit}",

@@ -10,6 +10,8 @@ namespace UltimateWinUI.Views;
 
 public sealed partial class LogsPage : Page
 {
+    private bool _scrollScheduled;
+
     public LogsPage()
     {
         InitializeComponent();
@@ -21,8 +23,15 @@ public sealed partial class LogsPage : Page
 
     private void Lines_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.Action == NotifyCollectionChangedAction.Add)
-            ScrollToEnd();
+        if (e.Action != NotifyCollectionChangedAction.Add || _scrollScheduled) return;
+
+        _scrollScheduled = true;
+        if (!DispatcherQueue.TryEnqueue(() =>
+            {
+                _scrollScheduled = false;
+                ScrollToEnd();
+            }))
+            _scrollScheduled = false;
     }
 
     private void ScrollToEnd()

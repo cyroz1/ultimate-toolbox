@@ -95,9 +95,8 @@ public sealed class Runner
         await RunPowerShellHiddenAsync(path);
     }
 
-    private Task<int> RunPowerShellHiddenAsync(string scriptPath, IReadOnlyList<string>? inputs = null)
+    private async Task<int> RunPowerShellHiddenAsync(string scriptPath, IReadOnlyList<string>? inputs = null)
     {
-        var tcs = new TaskCompletionSource<int>();
         var psi = new ProcessStartInfo
         {
             FileName = "powershell.exe",
@@ -108,32 +107,58 @@ public sealed class Runner
             RedirectStandardError = true,
             RedirectStandardInput = true,
         };
-        var proc = new Process { StartInfo = psi, EnableRaisingEvents = true };
-        proc.OutputDataReceived += (_, e) => { if (e.Data != null) _log.Write(e.Data); };
-        proc.ErrorDataReceived += (_, e) => { if (e.Data != null) _log.Write("ERR: " + e.Data); };
-        proc.Exited += (_, _) =>
+        var outputClosed = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var errorClosed = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var proc = new Process { StartInfo = psi };
+        proc.OutputDataReceived += (_, e) =>
         {
-            tcs.TrySetResult(proc.ExitCode);
-            proc.Dispose();
+            if (e.Data == null) outputClosed.TrySetResult(true);
+            else _log.Write(e.Data);
         };
+        proc.ErrorDataReceived += (_, e) =>
+        {
+            if (e.Data == null) errorClosed.TrySetResult(true);
+            else _log.Write("ERR: " + e.Data);
+        };
+
         try
         {
             proc.Start();
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
+        }
+        catch (Exception ex)
+        {
+            _log.Write("Failed to start PowerShell: " + ex.Message);
+            try
+            {
+                if (!proc.HasExited)
+                    proc.Kill(entireProcessTree: true);
+            }
+            catch { }
+            return -1;
+        }
+
+        try
+        {
             // Feed known Read-Host prompts, then close stdin so any prompt that
             // was not represented in the app cannot hang in the hidden process.
             if (inputs != null)
                 foreach (var line in inputs)
                     proc.StandardInput.WriteLine(line);
-            proc.StandardInput.Close();
         }
         catch (Exception ex)
         {
-            _log.Write("Failed to start PowerShell: " + ex.Message);
-            tcs.TrySetResult(-1);
+            _log.Write("Failed to send input to PowerShell: " + ex.Message);
         }
-        return tcs.Task;
+        finally
+        {
+            try { proc.StandardInput.Close(); } catch { }
+        }
+
+        await proc.WaitForExitAsync();
+        await Task.WhenAll(outputClosed.Task, errorClosed.Task);
+        return proc.ExitCode;
     }
 
     private static string Sanitize(string value)

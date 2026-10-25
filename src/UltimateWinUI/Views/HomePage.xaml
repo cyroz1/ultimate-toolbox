@@ -58,7 +58,7 @@
 
             <TextBlock Text="Notes" Style="{StaticResource SectionHeaderStyle}" />
             <TextBlock Style="{StaticResource CaptionStyle}" FontSize="13"
-                       Text="Most tweaks need a restart before they fully apply, same as the original scripts. Advanced tweaks can disable security features; the app asks before running them and creates a restore point first (both can be changed in Settings). Script output never opens a console, it goes to Logs." />
+                       Text="Most tweaks need a restart before they fully apply, same as the original scripts. Advanced tweaks can disable security features; the app asks before running them by default. You can enable restore points in Settings. Script output never opens a console, it goes to Logs." />
         </StackPanel>
     </ScrollViewer>
 </Page>

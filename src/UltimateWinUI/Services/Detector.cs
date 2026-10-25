@@ -22,6 +22,14 @@ public static class Detector
 {
     public static void Detect(Tweak tweak, StateStore store)
     {
+        Detect(tweak, store, null);
+    }
+
+    private static void Detect(
+        Tweak tweak,
+        StateStore store,
+        Dictionary<string, RegistryReadResult>? readCache)
+    {
         TweakOption? best = null;
         var bestScore = 0;
         var bestIsAmbiguous = false;
@@ -35,13 +43,13 @@ public static class Detector
                 foreach (var sig in option.Signature)
                 {
                     entries++;
-                    if (sig != null && ValueMatches(sig)) matched++;
+                    if (sig != null && ValueMatches(sig, readCache)) matched++;
                 }
             if (option.Deletes != null)
                 foreach (var del in option.Deletes)
                 {
                     entries++;
-                    if (del != null && ReadValue(del.Key, del.Name).State == RegistryReadState.Missing)
+                    if (del != null && ReadValue(del.Key, del.Name, readCache).State == RegistryReadState.Missing)
                         matched++;
                 }
 
@@ -83,14 +91,18 @@ public static class Detector
 
     public static void DetectAll(CatalogDoc catalog, StateStore store)
     {
+        // Many tweaks share signatures (for example, mouse settings). Read each
+        // registry value once during a full pass instead of reopening it for
+        // every matching option.
+        var readCache = new Dictionary<string, RegistryReadResult>(StringComparer.OrdinalIgnoreCase);
         foreach (var cat in catalog.Categories)
             foreach (var tweak in cat.Tweaks)
-                Detect(tweak, store);
+                Detect(tweak, store, readCache);
     }
 
-    private static bool ValueMatches(SigEntry sig)
+    private static bool ValueMatches(SigEntry sig, Dictionary<string, RegistryReadResult>? readCache)
     {
-        var result = ReadValue(sig.Key, sig.Name);
+        var result = ReadValue(sig.Key, sig.Name, readCache);
         if (sig.Kind == "deleted") return result.State == RegistryReadState.Missing;
         if (result.State != RegistryReadState.Found) return false;
 
@@ -148,7 +160,24 @@ public static class Detector
 
     private readonly record struct RegistryReadResult(RegistryReadState State, object? Value = null);
 
-    private static RegistryReadResult ReadValue(string fullKeyPath, string valueName)
+    private static RegistryReadResult ReadValue(
+        string fullKeyPath,
+        string valueName,
+        Dictionary<string, RegistryReadResult>? readCache)
+    {
+        if (readCache == null)
+            return ReadValueUncached(fullKeyPath, valueName);
+
+        var cacheKey = fullKeyPath + "\0" + valueName;
+        if (readCache.TryGetValue(cacheKey, out var cached))
+            return cached;
+
+        var result = ReadValueUncached(fullKeyPath, valueName);
+        readCache[cacheKey] = result;
+        return result;
+    }
+
+    private static RegistryReadResult ReadValueUncached(string fullKeyPath, string valueName)
     {
         try
         {
