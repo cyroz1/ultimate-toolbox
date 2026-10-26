@@ -13,7 +13,6 @@ namespace UltimateWinUI.Views;
 /// Renders a whole category (or search results) from the catalog. Every card
 /// is built in code from the tweak's control type:
 ///
-///   toggle   -> ToggleSwitch between the two options
 ///   dropdown -> ComboBox of options + Apply button
 ///   button   -> a single Run button
 ///   actions  -> one button per option (open / run / check style scripts)
@@ -198,30 +197,6 @@ public sealed partial class CategoryPage : Page
         var enabled = !tweak.IsBusy;
         switch (tweak.Control)
         {
-            case "toggle" when tweak.ChoiceOptions.Count == 2:
-            {
-                var active = tweak.ActiveOption!;
-                var other = tweak.ChoiceOptions[0] == active ? tweak.ChoiceOptions[1] : tweak.ChoiceOptions[0];
-                var sw = new ToggleSwitch
-                {
-                    IsEnabled = enabled,
-                    OnContent = "",
-                    OffContent = "",
-                    Tag = tweak,
-                };
-                sw.IsOn = tweak.CurrentOptionLabel == active.Label;
-                sw.Toggled += async (_, _) =>
-                {
-                    if (_building) return;
-                    var target = sw.IsOn ? active : other;
-                    if (tweak.CurrentOptionLabel != target.Label)
-                        await RunWithInputsAsync(tweak, target);
-                    else
-                        RefreshCards();
-                };
-                host.Children.Add(sw);
-                break;
-            }
             case "dropdown" when tweak.ChoiceOptions.Count > 0:
             {
                 var combo = new ComboBox { IsEnabled = enabled, MinWidth = 200 };

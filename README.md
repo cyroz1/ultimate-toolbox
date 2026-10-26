@@ -12,8 +12,8 @@ Windows optimization script library, styled after the Windows Settings app
   categories: Check, Refresh, Setup, Installers, Graphics, Windows, Hardware,
   Advanced.
 - **The right control for every tweak**, generated from the script itself:
-  - 2 options -> a **toggle switch**
-  - 3+ options -> a **dropdown** + Apply
+  - 2+ options -> a **dropdown** + Apply, preselected to the detected or
+    last-applied state
   - a script that only opens something -> a **button / link** (settings pages,
     control panel applets, websites, other apps)
   - multi-action scripts -> one button per action
@@ -57,13 +57,13 @@ python tools\catalog_gen.py ..\Ultimate src\UltimateWinUI\Assets\Scripts src\Ult
 Requires Windows + the .NET 8 SDK. WinUI 3 cannot be built on Linux/macOS.
 
 ```powershell
-dotnet publish src\UltimateWinUI\UltimateWinUI.csproj -c Release -r win-x64 --self-contained true -p:Version=1.0.3 -o artifacts\publish\win-x64
+dotnet publish src\UltimateWinUI\UltimateWinUI.csproj -c Release -r win-x64 --self-contained true -p:Version=1.0.4 -o artifacts\publish\win-x64
 ```
 
 Installer (Inno Setup 6), for x64:
 
 ```powershell
-& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=1.0.3 /DPublishDir=..\artifacts\publish\win-x64 /DOutName=UltimateWinUI-x64-Setup-1.0.3 /DArchAllowed=x64compatible /DIn64Bit=x64compatible /Oartifacts installer\UltimateWinUI.iss
+& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=1.0.4 /DPublishDir=..\artifacts\publish\win-x64 /DOutName=UltimateWinUI-x64-Setup-1.0.4 /DArchAllowed=x64compatible /DIn64Bit=x64compatible /Oartifacts installer\UltimateWinUI.iss
 ```
 
 ## CI

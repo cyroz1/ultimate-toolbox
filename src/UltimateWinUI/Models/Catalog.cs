@@ -40,7 +40,7 @@ public sealed class Tweak
     [JsonPropertyName("description")] public string Description { get; set; } = "";
     [JsonPropertyName("order")] public int Order { get; set; }
     [JsonPropertyName("script")] public string Script { get; set; } = "";
-    /// <summary>toggle | dropdown | button | actions</summary>
+    /// <summary>dropdown | button | actions</summary>
     [JsonPropertyName("control")] public string Control { get; set; } = "button";
     [JsonPropertyName("options")] public List<TweakOption> Options { get; set; } = new();
     [JsonPropertyName("recommended")] public string? Recommended { get; set; }
@@ -86,24 +86,6 @@ public sealed class Tweak
         }
     }
 
-    /// <summary>
-    /// The option that counts as "on" for a toggle: the recommended one when the
-    /// library marks one, otherwise the first choice.
-    /// </summary>
-    [JsonIgnore]
-    public TweakOption? ActiveOption
-    {
-        get
-        {
-            var choices = ChoiceOptions;
-            if (choices.Count == 0) return null;
-            if (Recommended != null)
-                foreach (var o in choices)
-                    if (o.Label == Recommended)
-                        return o;
-            return choices[0];
-        }
-    }
 }
 
 public sealed class TweakOption

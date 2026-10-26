@@ -1,9 +1,9 @@
 ; UltimateWinUI installer (Inno Setup 6)
-; Build: iscc /DAppVersion=1.0.3 /DPublishDir=<dotnet publish output> UltimateWinUI.iss
+; Build: iscc /DAppVersion=1.0.4 /DPublishDir=<dotnet publish output> UltimateWinUI.iss
 ; CI passes both defines; the defaults below work for a local publish to ..\artifacts\publish\win-x64
 
 #ifndef AppVersion
-  #define AppVersion "1.0.3"
+  #define AppVersion "1.0.4"
 #endif
 #ifndef PublishDir
   #define PublishDir "..\artifacts\publish\win-x64"

@@ -285,8 +285,6 @@ def control_for(options) -> str:
         return "actions"          # only check / launch buttons
     if len(applies) == 1 and len(options) == 1:
         return "button"
-    if len(applies) == 2:
-        return "toggle"
     return "dropdown"
 
 
@@ -298,7 +296,7 @@ def main() -> int:
 
     categories = []
     total = 0
-    stats = {"toggle": 0, "dropdown": 0, "button": 0, "actions": 0}
+    stats = {"dropdown": 0, "button": 0, "actions": 0}
 
     for folder in sorted(p for p in src.iterdir() if p.is_dir() and p.name in CATEGORY_META):
         cat_name, cat_desc = CATEGORY_META[folder.name]
